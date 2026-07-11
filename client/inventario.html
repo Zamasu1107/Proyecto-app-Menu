@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="src/css/styleInv.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Interfaz Inventario</title>
+  </head>
+  <body id="pag-inventario">
+    <main>
+        <section class="cards" id="contenedor-cards">
+        </section>
+
+        <section>
+            <header>
+                <h1>Ingrese nuevo producto</h1>
+            </header>
+
+            <form action="POST" id="ingresar-producto">
+                <label for="nombre">Nombre</label>
+                    <input type="text" name="nombre" id="nombre-prod" placeholder="Nombre del Producto">
+                <label for="cantidad">Cantidad</label>
+                    <input type="text" name="cantidad" id="cantidad-prod" placeholder="Cantidad del Producto">
+                <label for="medida">Medida</label>
+                    <input type="text" name="medida" id="medida-prod" placeholder="Ingrese tipo de medida">
+                <label for="tipo-alc">Tipo</label>
+                    <input type="text" list="tipo-alcohol" name="tipo-alc" id="destilado-prod" required>
+                        <datalist id="tipo-alcohol">
+                            <option value="Vodka"></option>
+                            <option value="Ron"></option>
+                            <option value="Whisky"></option>
+                            <option value="Tequila"></option>
+                            <option value="Ginebra"></option>
+                            <option value="Mezcal"></option>
+                            <option value="Brandy"></option>
+                        </datalist>
+                    <input type="submit" value="Agregar Producto" id="guardarprod">
+            </form>
+        </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
