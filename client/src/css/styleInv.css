@@ -1,79 +1,72 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-#pag-inventario {
+#contenedor-cards-prod {
     min-height: 100vh;
-    background: linear-gradient(180deg, #120e0a 0%, #25160b 60%, #462910 100%);
+    /* background: linear-gradient(180deg, #120e0a 0%, #25160b 60%, #462910 100%);
     background-attachment: fixed;
-    color: #f5f5f7;
+    color: #f5f5f7; */
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-main {
+/* --- SECCIÓN DE TARJETAS DE DESTILADOS --- */
+
+.vista-pagina {
     width: 100%;
-    max-width: 480px; /* Acoplado a la vista móvil de tu captura */
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    align-items: center;
 }
 
-/* --- SECCIÓN DE TARJETAS DE DESTILADOS --- */
-.cards {
+/* La clase oculto ahora es universal para tus páginas */
+.vista-pagina.oculto {
+    display: none !important;
+}
+
+/* --- CONTENEDOR ESPECÍFICO DE PRODUCTOS --- */
+.cards-productos {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 100%;
+    width: 100%; /* Obliga a la lista a expandirse por completo */
+    margin-bottom: 30px;
 }
 
-.card {
-    background-color: rgba(0, 0, 0, 0.5);
+/* --- TARJETAS DE PRODUCTOS CORREGIDAS --- */
+.card-prod {
+    background-color: rgba(0, 0, 0, 0.45);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     padding: 20px;
+    width: 100%; /* ¡CLAVE! Evita que la tarjeta se encoja al centro */
     display: flex;
     flex-direction: column;
     gap: 12px;
-    position: relative;
-    overflow: hidden;
+    box-sizing: border-box;
 }
 
-.card h2 {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #ffffff;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 8px;
-}
-
-.card div {
+.card-prod div {
     display: flex;
     flex-direction: column;
     gap: 6px;
 }
 
-.card p {
+.card-prod p {
     font-size: 0.9rem;
     color: #c5c5ca;
 }
 
 /* --- CLASES DINÁMICAS DE DISPONIBILIDAD (Bordes de Alerta) --- */
-/* En tu JS del TS, puedes evaluar el texto y añadir estas clases a .card */
+/* En tu JS del TS, puedes evaluar el texto y añadir estas clases a .card-prod */
 
-.card.dispo-alta {
+.card-prod.dispo-alta {
     border-left: 5px solid #2ecc71; /* Verde esmeralda */
 }
-.card.dispo-media {
+.card-prod.dispo-media {
     border-left: 5px solid #f1c40f; /* Ámbar/Amarillo */
 }
-.card.dispo-baja {
+.card-prod.dispo-baja {
     border-left: 5px solid #e74c3c; /* Rojo Alerta */
 }
 
@@ -87,90 +80,243 @@ main {
 .dispo-media .disponibilidad { color: #f1c40f; }
 .dispo-baja .disponibilidad { color: #e74c3c; }
 
+#btn-regresar {
+    align-self: flex-start; /* Lo alinea a la izquierda de la pantalla */
+    margin: 10px 0 20px 0;
+    background-color: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #b0b0b5; /* Gris suave */
+    padding: 10px 18px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 30px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; /* Espacio entre la flecha SVG y el texto */
+    transition: all 0.2s ease;
+}
 
-/* --- SECCIÓN DEL FORMULARIO DE INGRESO --- */
-section:has(#ingresar-producto) {
-    background-color: rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
+#btn-regresar:hover {
+    color: #ffffff;
+    border-color: #854f1d; /* Cambia al color licor al pasar el mouse */
+    background-color: rgba(133, 79, 29, 0.1);
+}
+
+#btn-regresar svg {
+    transition: transform 0.2s ease;
+}
+
+#btn-regresar:hover svg {
+    transform: translateX(-3px); /* Pequeña animación interactiva de la flecha */
+}
+
+#btn-regresar:active {
+    transform: scale(0.98);
+}
+
+.header-card-producto {
+    display: flex;
+    justify-content: space-between; /* Empuja el título a la izq y el botón a la der */
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+}
+
+.header-card-producto h2 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    border: none; /* Quitamos el borde inferior viejo */
+    padding: 0;
+    margin: 0;
+}
+
+/* BOTÓN DE EDITAR EN LA ESQUINA */
+.btn-editar-prod {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #854f1d; /* Tono ámbar licor */
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-editar-prod:hover {
+    background-color: #854f1d;
+    color: #ffffff;
+    border-color: #854f1d;
+    transform: scale(1.05);
+}
+
+
+/* --- VENTANA MODAL (BACKDROP & POPUP) --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75); /* Fondo oscuro semitransparente */
+    backdrop-filter: blur(8px); /* Aplica desenfoque a la pantalla trasera */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que flotará encima de todo */
+    padding: 20px;
+}
+
+.modal-backdrop.oculto {
+    display: none !important;
+}
+
+.modal-contenido {
+    background-color: #1a140e; /* Tono oscuro sólido tipo bar */
+    border: 1px solid rgba(133, 79, 29, 0.4); /* Borde ámbar */
+    border-radius: 18px;
     padding: 24px;
     width: 100%;
+    max-width: 420px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
-section:has(#ingresar-producto) header h1 {
-    font-size: 1.2rem;
-    font-weight: 500;
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+}
+
+.modal-header h3 {
     color: #ffffff;
-    margin-bottom: 20px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    font-size: 1.2rem;
 }
 
-/* Estructura del formulario en un Grid limpio de 2 columnas */
-#ingresar-producto {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+.btn-cerrar-modal {
+    background: none;
+    border: none;
+    color: #b0b0b5;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+/* CAMPOS Y BOTONES DENTRO DEL MODAL */
+#form-editar-producto {
+    display: flex;
+    flex-direction: column;
     gap: 16px;
 }
 
-/* Contenedores para agrupar Label + Input y que no se rompa el Grid */
-#ingresar-producto label {
-    grid-column: span 2; /* Los labels ocupan todo el ancho */
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #854f1d; /* Tono licor elegante */
-    margin-bottom: -10px; /* Acerca el label al input */
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
 }
 
-#ingresar-producto input:not([type="submit"]) {
-    grid-column: span 2; /* Por defecto ocupan todo el ancho */
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 8px;
-    padding: 12px;
-    color: #ffffff;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
+.btn-cancelar {
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #c5c5ca;
 }
 
-/* OPTIMIZACIÓN DE ESPACIO: Cantidad y Medida vivirán lado a lado */
-#ingresar-producto label[for="cantidad"],
-#ingresar-producto label[for="medida"] {
-    grid-column: span 1;
-}
-#cantidad-prod, #medida-prod {
-    grid-column: span 1 !important;
-}
-
-#ingresar-producto input:focus {
-    outline: none;
-    border-color: #854f1d;
+.btn-cancelar:hover {
     background-color: rgba(255, 255, 255, 0.08);
-    box-shadow: 0 0 8px rgba(133, 79, 29, 0.3);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* --- BOTÓN DE ENVIAR (SUBMIT) --- */
-#guardarprod {
-    grid-column: span 2;
-    margin-top: 10px;
-    background-color: #854f1d; /* Botón premium ámbar oscuro */
+.btn-guardar {
+    background-color: #854f1d;
+    border: 1px solid #854f1d;
     color: #ffffff;
-    border: none;
-    border-radius: 10px;
-    padding: 14px;
-    font-size: 1rem;
-    font-weight: bold;
+}
+
+.btn-guardar:hover {
+    background-color: #a36224;
+    border-color: #a36224;
+    box-shadow: 0 0 10px rgba(133, 79, 29, 0.4);
+}
+
+.card-prod .header-card-producto {
+    display: flex !important;
+    flex-direction: row !important; /* Fuerza a que queden lado a lado en horizontal */
+    justify-content: space-between !important; /* Empuja el título a la izquierda y el lápiz a la derecha */
+    align-items: center !important;
+    width: 100% !important;
+    text-align: left !important; /* Quita el centrado previo */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+/* Forzamos a que el título no use display block ni márgenes raros */
+.card-prod .header-card-producto h2 {
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 1.25rem !important;
+    text-align: left !important;
+    border: none !important;
+}
+
+/* Asegura las dimensiones fijas del botón del lápiz */
+.btn-editar-prod {
+    flex-shrink: 0; /* Impide que el botón se aplaste si el título es muy largo */
+    margin: 0 !important;
+}
+
+.btn-editar-prod svg, .btn-editar-prod path {
+    pointer-events: none; /* Obliga a que el clic siempre caiga en el botón */
+}
+
+.modal-acciones {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Divide el espacio en 3 columnas exactamente iguales */
+    gap: 10px;
+    margin-top: 15px;
+    align-items: center;
+}
+
+/* Regla base compartida para los 3 botones para asegurar simetría */
+.modal-acciones button {
+    padding: 12px 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    box-sizing: border-box;
 }
 
-#guardarprod:hover {
-    background-color: #a36224;
-    transform: translateY(-1px);
+/* BOTÓN ELIMINAR (Acción Destructiva) */
+.btn-eliminar {
+    background-color: rgba(231, 76, 60, 0.12); /* Fondo rojo sutil esmerilado */
+    border: 1px solid rgba(231, 76, 60, 0.4);   /* Borde rojo de advertencia */
+    color: #e74c3c;                            /* Texto e icono rojo */
 }
 
-#guardarprod:active {
-    transform: translateY(1px);
+.btn-eliminar:hover {
+    background-color: #e74c3c;                  /* Se llena de rojo intenso al pasar el mouse */
+    color: #ffffff;
+    border-color: #e74c3c;
+    box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+}
+
+.btn-eliminar svg {
+    pointer-events: none; /* Evita interferencias de clics */
 }

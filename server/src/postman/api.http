@@ -1,1 +1,23 @@
-GET http://localhost:1001
+GET http://localhost:1001/api/ingredientes
+
+###
+
+POST http://localhost:1001/api/ingredientes
+Content-Type: application/json
+
+{
+    "nombre":"Will Turners", 
+    "tipo_insumo":"Destilados", 
+    "cantidad_ml":500, 
+    "unidad_medida":"ml", 
+    "precio":1500
+}
+
+### Actualizar
+PATCH http://localhost:1001/api/ingredientes/11f18491-a587-a297-9d5b-a0ad9f862f68
+Content-Type: application/json
+
+{
+    "cantidad_botellas" : 5
+}
+

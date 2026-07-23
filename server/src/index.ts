@@ -11,6 +11,9 @@ app.disable('x-powered-by');
 
 app.use('/', router)
 app.use('/', router)
+app.use('/', router)
+app.use('/', router)
+app.use('/', router)
 
 app.listen(PORT, () => {
     console.log(`Server is listening in http://localhost:${PORT}`); 

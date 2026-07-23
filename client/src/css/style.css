@@ -42,7 +42,7 @@ header, main {
 }
 
 /* --- CONTENEDOR DE TARJETAS (SECCIÓN) --- */
-.cards {
+.cards-insumo {
     display: flex;
     flex-direction: column;
     gap: 16px; /* Reemplaza los <br> de forma limpia y exacta */
@@ -99,4 +99,177 @@ header, main {
     border-radius: 10px;
     background-color: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* --- SECCIÓN DEL FORMULARIO DE INGRESO --- */
+section:has(#ingresar-producto) {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+}
+
+section:has(#ingresar-producto) header h1 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #ffffff;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Estructura del formulario en un Grid limpio de 2 columnas */
+#ingresar-producto {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+/* Contenedores para agrupar Label + Input y que no se rompa el Grid */
+#ingresar-producto, #campos-dinamicos label {
+    grid-column: span 2; /* Los labels ocupan todo el ancho */
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #854f1d; /* Tono licor elegante */
+    margin-bottom: -10px; /* Acerca el label al input */
+}
+
+#ingresar-producto input:not([type="submit"]) {
+    grid-column: span 2; /* Por defecto ocupan todo el ancho */
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 12px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+/* OPTIMIZACIÓN DE ESPACIO: Cantidad y Medida vivirán lado a lado */
+#ingresar-producto .grupo-input {
+    grid-column: span 1; /* Hace que el contenedor de Cantidad y el de Medida ocupen la mitad cada uno */
+    display: flex;
+    flex-direction: column;
+    gap: 6px; /* Espacio exacto entre el label y su caja de texto */
+}
+
+/* Asegura que los inputs ocupen todo el ancho de su columna asignada */
+#cantidad-prod, #medida-prod {
+    width: 100%;
+}
+
+#ingresar-producto input:focus {
+    outline: none;
+    border-color: #854f1d;
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 8px rgba(133, 79, 29, 0.3);
+}
+
+#ingresar-producto select {
+    grid-column: span 2; /* Ocupa todo el ancho del formulario igual que los otros */
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 12px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    
+    /* Reemplaza la flecha por defecto del navegador por una más limpia */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23854f1d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 40px; /* Espacio para que el texto no tape la flecha */
+}
+
+/* Efecto Focus al hacerle clic */
+#ingresar-producto select:focus {
+    outline: none;
+    border-color: #854f1d;
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 8px rgba(133, 79, 29, 0.3);
+}
+
+/* --- ESTILO PARA LAS OPCIONES DESPLEGABLES --- */
+/* Nota: El menú desplegable del sistema operativo no se puede tunear al 100%, 
+   pero ponerle un fondo oscuro evita que salga un cuadro blanco brillante */
+#ingresar-producto select option {
+    background-color: #1a1510; /* Fondo oscuro tipo bar */
+    color: #ffffff;
+    padding: 10px;
+}
+
+/* --- BOTÓN DE ENVIAR (SUBMIT) --- */
+#guardarprod {
+    grid-column: span 2;
+    margin-top: 10px;
+    background-color: #854f1d; /* Botón premium ámbar oscuro */
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#guardarprod:hover {
+    background-color: #a36224;
+    transform: translateY(-1px);
+}
+
+#guardarprod:active {
+    transform: translateY(1px);
+}
+
+/* --- CONTROL DE CAMPOS DINÁMICOS --- */
+.campos-dinamicos {
+    grid-column: span 2; /* Ocupa todo el ancho dentro del formulario principal */
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Crea su propio sub-grid de 2 columnas */
+    gap: 16px;
+    width: 100%;
+}
+
+/* Clase de control para JavaScript */
+.campos-dinamicos.oculto {
+    display: none !important; /* Oculta todo el bloque y sus hijos */
+}
+
+/* Clases auxiliares para ordenar los tamaños de los inputs */
+.ancho-completo {
+    grid-column: span 2;
+}
+
+.grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Asegura que los inputs internos hereden el estilo glassmorphism que ya tienes */
+.campos-dinamicos input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 12px;
+    color: #ffffff;
+    font-size: 0.95rem;
+}
+
+.campos-dinamicos label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #854f1d;
 }
