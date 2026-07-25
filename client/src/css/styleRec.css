@@ -1,0 +1,337 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- FONDO AMADERADO Y ELEGANTE (CAFETERÍA / BAR DE AUTOR) --- */
+#pag-receta {
+    min-height: 100vh;
+    /* Gradient profundo que simula madera de nogal/caoba con iluminación cálida */
+    background: radial-gradient(circle at top, #2d1a10 0%, #170d08 60%, #0a0503 100%);
+    background-attachment: fixed;
+    color: #f2e9e1; /* Blanco cálido/crema para excelente legibilidad */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+main {
+    width: 100%;
+    max-width: 520px; /* Tamaño ideal para vista móvil / tablet equilibrada */
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- CABECERA --- */
+#titulo {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+#titulo h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    color: #e6c594; /* Color cobre/oro viejo super refinado */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* --- TARJETAS BASE (Estilo madera oscura traslúcida) --- */
+article {
+    background-color: rgba(26, 15, 10, 0.65);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(230, 197, 148, 0.15); /* Borde cobre sutil */
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* --- FORMULARIO ENCABEZADO --- */
+.forms-recetas {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.forms-recetas label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #e6c594;
+    margin-bottom: -6px;
+}
+
+.forms-recetas input,
+.forms-recetas select {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(230, 197, 148, 0.2);
+    border-radius: 10px;
+    padding: 12px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    transition: all 0.25 ease;
+}
+
+.forms-recetas input:focus,
+.forms-recetas select:focus {
+    outline: none;
+    border-color: #e6c594;
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 10px rgba(230, 197, 148, 0.2);
+}
+
+.forms-recetas select option {
+    background-color: #170d08;
+    color: #ffffff;
+}
+
+/* --- BOTÓN PRINCIPAL DE GUARDAR (ESTADO ACTIVO Y DESACTIVADO) --- */
+#btn-principal {
+    margin-top: 10px;
+    background: linear-gradient(135deg, #a86b32 0%, #78471d 100%);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(120, 71, 29, 0.4);
+    transition: all 0.3s ease;
+}
+
+#btn-principal:hover:not(:disabled) {
+    background: linear-gradient(135deg, #b87a3e 0%, #8a5323 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(120, 71, 29, 0.6);
+}
+
+/* ESTADO DESACTIVADO (DISABLED) */
+#btn-principal:disabled {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #7a7067 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* --- BARRA DE BÚSQUEDA DE INGREDIENTES --- */
+#barra-busqueda {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#barra-busqueda input {
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(230, 197, 148, 0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 0.9rem;
+}
+
+#barra-busqueda input:focus {
+    outline: none;
+    border-color: #e6c594;
+}
+
+#btn-barra-busqueda {
+    background-color: rgba(230, 197, 148, 0.12);
+    border: 1px solid #e6c594;
+    color: #e6c594;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+#btn-barra-busqueda:hover {
+    background-color: #e6c594;
+    color: #170d08;
+}
+
+/* --- TABLA DINÁMICA DE INGREDIENTES --- */
+.tabla-dinamica {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.tabla-dinamica th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #e6c594;
+    border-bottom: 1px solid rgba(230, 197, 148, 0.2);
+    padding: 10px 8px;
+    letter-spacing: 0.5px;
+}
+
+.tabla-dinamica td {
+    padding: 12px 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    vertical-align: middle;
+    font-size: 0.9rem;
+}
+
+/* Ancho fijo para las columnas de acción y cantidad */
+.tabla-dinamica th:first-child, 
+.tabla-dinamica td:first-child {
+    width: 45px;
+    text-align: center;
+}
+
+.tabla-dinamica th:last-child, 
+.tabla-dinamica td:last-child {
+    width: 90px;
+}
+
+/* Estilo para los inputs de cantidad en la tabla */
+.tabla-dinamica input[type="number"] {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+    padding: 6px 8px;
+    color: #ffffff;
+    text-align: center;
+}
+
+/* Estilo para el botón de quitar ingrediente */
+
+.tabla-dinamica .btn-quitarIng {
+    background-color: rgba(231, 76, 60, 0.12); /* Rojo traslúcido sutil */
+    border: 1px solid rgba(231, 76, 60, 0.35);
+    color: #e74c3c;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tabla-dinamica .btn-quitarIng:hover {
+    background-color: #e74c3c;
+    color: #ffffff;
+    border-color: #e74c3c;
+    transform: scale(1.08);
+    box-shadow: 0 0 8px rgba(231, 76, 60, 0.4);
+}
+
+.tabla-dinamica .btn-quitarIng:active {
+    transform: scale(0.95);
+}
+
+/* Desactiva los eventos del ratón dentro del SVG para que el evento click siempre lo reciba el button */
+.tabla-dinamica .btn-quitarIng svg,
+.tabla-dinamica .btn-quitarIng path,
+.tabla-dinamica .btn-quitarIng line {
+    pointer-events: none;
+}
+
+#barra-busqueda {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    position: relative; /* Base para el z-index */
+}
+
+/* Envoltorio que sostiene el Input y el Menú Flotante */
+.campo-busqueda-wrapper {
+    position: relative; /* ¡CLAVE! Permite anclar el menú justo debajo del input */
+    flex: 1;           /* Ocupa todo el espacio horizontal disponible */
+}
+
+.campo-busqueda-wrapper input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(230, 197, 148, 0.2);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-size: 0.9rem;
+    box-sizing: border-box;
+}
+
+.campo-busqueda-wrapper input:focus {
+    outline: none;
+    border-color: #e6c594;
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+
+/* --- MENÚ DESPLEGABLE DE SUGERENCIAS (AUTOCOMPLETADO) --- */
+.autocompletado {
+    position: absolute;
+    top: calc(100% + 6px); /* Lo posiciona justo 6px debajo del input */
+    left: 0;
+    width: 100%;
+    background-color: #1c110a; /* Tono nogal sólido traslúcido */
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(230, 197, 148, 0.3); /* Borde cobre refinado */
+    border-radius: 12px;
+    max-height: 200px; /* Límite de alto para mostrar scrollbar si hay muchos resultados */
+    overflow-y: auto;
+    z-index: 100; /* Asegura que flote POR ENCIMA de la tabla de abajo */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
+}
+
+/* Oculta la caja desplegable cuando no haya texto en el buscador */
+.autocompletado.oculto {
+    display: none !important;
+}
+
+/* Estilos para la lista UL y los ítems LI */
+.autocompletado ul {
+    list-style: none;
+    margin: 0;
+    padding: 6px;
+}
+
+.item-busqueda {
+    padding: 10px 14px;
+    color: #f2e9e1;
+    font-size: 0.88rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Animación y feedback al pasar el mouse o navegar con teclado */
+.item-busqueda:hover {
+    background-color: rgba(230, 197, 148, 0.15); /* Resaltado color cobre */
+    color: #e6c594;
+    padding-left: 18px; /* Ligero desplazamiento elegante hacia la derecha */
+}
+
+/* Personalización de la barra de desplazamiento del menú (Scrollbar) */
+.autocompletado::-webkit-scrollbar {
+    width: 6px;
+}
+.autocompletado::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 0 12px 12px 0;
+}
+.autocompletado::-webkit-scrollbar-thumb {
+    background: #854f1d;
+    border-radius: 4px;
+}

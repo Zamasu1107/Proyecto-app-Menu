@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/css/styleRec.css">
+    <title>Añadir Recetas</title>
+</head>
+<body id="pag-receta">
+
+    <div>
+        <header id="titulo">
+            <h1>Crear Nueva Receta</h1>
+        </header>
+    </div>
+    <main>
+        <article id="form-base">
+            <form action="POST" id="form-receta-cabezera" class="forms-recetas">
+                <label for="nombre">Nombre de la Receta</label>
+                    <input type="text" name="nombre" id="nombre-input" required>
+                <label for="precio-venta">Precio de Venta</label>
+                    <input type="number" name="precio-venta" id="precio-input" min="1" required>
+                <label for="categoria">Categoria</label>
+                <select name="categoria" id="tipo-receta" required>
+                    <option value="Mixologia">Mixologia</option>
+                    <option value="Clasicos">Clasicos</option>
+                    <option value="Shots">Shots</option>
+                    <option value="Cafe">Cafe</option>
+                </select>
+                <button type="submit" id="btn-principal" disabled>Guardar Receta</button>
+            </form>
+        </article>
+
+        <article>
+            <div class="container" id="barra-busqueda">
+                <div class="campo-busqueda-wrapper">
+                    <input type="text" name="barra" id="id-barra-busqueda" placeholder="Buscar Ingrediente..." autocomplete="off">
+                    <div class="autocompletado oculto" id="menu-Busqueda">
+                    </div>
+                </div>
+                <button id="btn-barra-busqueda">Añadir Ingrediente</button>
+            </div>
+
+            <div class="container" id="tabla-ingredientes">
+                <table class="tabla-dinamica">
+                    <thead>
+                        <tr>
+                        <th></th>
+                        <th>Ingrediente</th>
+                        <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ing-dinamicos">
+                        <tr>
+                            <td><button class="btn-quitarIng"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>  
+                                </button>
+                            </td>
+                            <td id="nombre-tabla">Absolut Vodka</td>
+                            <td><input type="number" min="1" placeholder="ml" required></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+    </main>
+    <script src="src/pages/recetaNueva.ts" type="module"></script>
+</body>
+</html>

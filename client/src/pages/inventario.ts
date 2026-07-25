@@ -1,32 +1,13 @@
-import type { DatosForm, EditForm, Ingrediente } from "./types/interfaces";
+import { obtenerIngredientes } from "../services/ingredientesService";
+import { obtenerRecetas } from "../services/recetasServices";
+import type { DatosForm, EditForm, Ingrediente } from "../types/interfaces";
 
-let datosGlobales:any = null;
+let datosGlobales:Ingrediente[] = []
 
-async function obtenerIngredientes () {
-  try {
-    const respuesta = await fetch('http://localhost:1001/api/ingredientes')
-    const datos = await respuesta.json();
-
-    console.log("¡Conexión Exitosa! Aquí están mis ingredientes de MySQL:", datos)
-
-    datosGlobales = datos;
-  } catch (error) {
-    console.error("Error al conectar con la cocina (Servidor):", error);
-  }
-}
-
-async function obtenerRecetas() {
-  try {
-    const respuesta = await fetch('http://localhost:1001/api/recetas')
-    const datos = await respuesta.json();
-
-    console.log("¡Conexión Exitosa! Aquí están mis recetas de MySQL:", datos)
-  } catch (error) {
-    console.error("Error al conectar con la cocina (Servidor):", error);
-  }
-}
-
-obtenerIngredientes();
+document.addEventListener('DOMContentLoaded', async () => {
+    datosGlobales = await obtenerIngredientes();
+    console.log("Inventario cargado en memoria listo para buscar:", datosGlobales);
+});
 obtenerRecetas();
 
 const tipos = document.getElementById('tipo-producto') as HTMLSelectElement;
@@ -171,7 +152,7 @@ function renderizarCards(ingredientesFiltrados:Ingrediente[]) {
 
         if (idDelProducto) {
             // Buscamos el producto correspondiente en tu array global de datos
-            const productoEncontrado:Ingrediente = datosGlobales.find((p:Ingrediente) => p.id === idDelProducto);
+            const productoEncontrado = datosGlobales.find((p:Ingrediente) => p.id === idDelProducto);
 
             if (productoEncontrado) {
                 // Inyectamos sus datos en el ÚNICO modal
@@ -255,10 +236,10 @@ botonEliminar.addEventListener('click', async (_Event:Event) => {
               },
             })
             document.getElementById('modal-editar-prod')?.classList.add('oculto');
-            datosGlobales = datosGlobales.filter((ingrediente:Ingrediente) => ingrediente.id !== idProducto);
+            let datos = datosGlobales.filter((ingrediente:Ingrediente) => ingrediente.id !== idProducto);
 
             // 4. Volvemos a dibujar las tarjetas en el HTML usando la lista limpia
-            renderizarCards(datosGlobales);
+            renderizarCards(datos);
   } catch (error) {
     console.error("Error al enviar los datos al Servidor:", error);
   }
