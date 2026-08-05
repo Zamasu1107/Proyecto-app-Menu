@@ -1,13 +1,12 @@
-import { RowDataPacket, ResultSetHeader } from "mysql2/promise";
-import pool from "../db/db";
-import { Ingredientes, ValidarDatos } from "../types/esquemas";
+import { Prisma } from "../generated/prisma/client";
+import prisma from "../db/prisma/prismaDB";
 
 export class MenuModel {
     static async obtenerIng () {
         try {
-            const [inventario] =await pool.query<RowDataPacket[]>('SELECT *, BIN_TO_UUID(id) as id FROM ingredientes WHERE activo = 1');
+            const inventario = await prisma.ingrediente.findMany({ where:{ activo:true}});
 
-            return inventario;
+            return inventario
         } catch (error) {
             console.log(error)
             throw new Error('No se pudo cargar la base de datos')
@@ -17,7 +16,7 @@ export class MenuModel {
     static async obtenerNombre (nombre:string) {
         try {
 
-            const [datos] =await pool.query<ValidarDatos[]>('SELECT BIN_TO_UUID(id) as id, nombre, activo FROM ingredientes WHERE nombre = ?;', nombre);
+            const datos = await prisma.ingrediente.findMany({where: {nombre: nombre,},select: {id: true,nombre: true,activo: true,},});
 
             return datos;
         } catch (error) {
@@ -26,23 +25,9 @@ export class MenuModel {
         }
     }
 
-    static async obtenerRec () {
+    static async guardarIng (input:Prisma.IngredienteCreateInput) {
         try {
-            const [inventario] = await pool.query<RowDataPacket[]>('SELECT nombre, imageRF, link_Youtube FROM recetas');
-
-            return inventario;
-        } catch (error) {
-           console.log(error)
-            throw new Error('No se pudo cargar la base de datos') 
-        }
-    }
-
-    static async guardarIng (input:Ingredientes) {
-        try {
-
-            const {nombre, tipo_insumo, cantidad_ml, cantidad_botellas, unidad_medida, precio, porcentaje_alcohol, marca, tipo_alcohol} = input
-
-            const [producto] = await pool.query<ResultSetHeader>('INSERT INTO ingredientes (nombre, tipo_insumo, cantidad_ml, cantidad_botellas, unidad_medida, precio, porcentaje_alcohol, marca, tipo_alcohol) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)', [nombre, tipo_insumo, cantidad_ml, cantidad_botellas, unidad_medida, precio, porcentaje_alcohol, marca, tipo_alcohol]) 
+            const producto = await prisma.ingrediente.create({ data: input }) 
 
             return producto
         } catch (error) {
@@ -51,21 +36,88 @@ export class MenuModel {
         }
     }
 
-    static async editarProductoExistente ({ id, input}: {id:string, input:Ingredientes}) {
-        const [updateIng] = await pool.query<ResultSetHeader>('UPDATE ingredientes SET ?, activo = 1 WHERE id = UUID_TO_BIN(?);', [input, id])
+    static async editarProductoExistente ({ id, input}: {id:string, input:Prisma.IngredienteCreateInput}) {
+        const updateIng = await prisma.ingrediente.update({ where: { id: id, activo: true}, data:input})
         
-        return updateIng.affectedRows > 0;
+        return updateIng;
     }
 
-    static async editarProducto ({ id, input}: {id:string, input:Ingredientes}) {
-        const [updateIng] = await pool.query<ResultSetHeader>('UPDATE ingredientes SET ? WHERE id = UUID_TO_BIN(?);', [input, id])
+    static async editarProducto ({ id, input}: {id:string, input:Prisma.IngredienteCreateInput}) {
+        const updateIng = await prisma.ingrediente.update({ where: { id: id}, data:input})
 
-        return updateIng.affectedRows > 0;
+        return updateIng;
     }
 
     static async borrarProducto (id:string) {
-        const [deleteIng] = await pool.query<ResultSetHeader>('UPDATE ingredientes SET activo = 0 WHERE id = UUID_TO_BIN(?);', id)
+        const deleteIng = await prisma.ingrediente.update( {where: { id:id }, data: {activo:false}})
 
-        return deleteIng.affectedRows > 0;
+        return deleteIng
+    }
+
+
+    static async obtenerRec () {
+        const recetas = await prisma.receta.findMany({
+            include: { recetas_ingredientes: { include : { ingrediente: true}}},
+        })
+
+        const recetasPosibles = recetas.filter((rec) => rec.recetas_ingredientes.length > 0 && rec.recetas_ingredientes.every(ing => ing.ingrediente.cantidad_ml >= ing.cantidad_necesaria))
+
+        return recetasPosibles;
+    }
+
+    static async guardarRec (input:Prisma.RecetaCreateInput) {
+        try {
+            const nuevaReceta = await prisma.receta.create({ data:input })
+
+            return nuevaReceta;
+        } catch (error) {
+            console.log(error)
+            throw new Error('No se pudo guardar el ingrediente')
+        }
+    }
+
+    static async prepararRec (id:string) {
+        const receta = await prisma.receta.findUnique({
+            where: {id: id},
+            include: {
+                recetas_ingredientes: {
+                    include: {
+                        ingrediente:true
+                    }
+                }
+            }
+        });
+
+        if (receta) {
+            const validacion = receta.recetas_ingredientes.every((ing) => ing.ingrediente.cantidad_ml >= ing.cantidad_necesaria)
+            if (!validacion) {
+                throw new Error ("Ingredientes insuficientes en el inventario");
+            }
+
+            const operacionResta = receta.recetas_ingredientes.flatMap((ing) => {
+                return [ 
+                    prisma.ingrediente.update({
+                    where: { 
+                        id: ing.ingrediente.id,
+                        cantidad_ml :{ gte: ing.cantidad_necesaria}
+                    },
+                        data: {
+                            cantidad_ml: {
+                                decrement: ing.cantidad_necesaria
+                            }
+                        }
+                    }),
+                    prisma.historial_recetas.create({
+                        data: {
+                            cantidad_descont : ing.cantidad_necesaria,
+                            ingrediente : { connect : {id: ing.id_ingrediente}},
+                            receta : { connect : {id: ing.id_receta}}
+                        }
+                    })
+                    ]
+                });
+            const operacion = await prisma.$transaction(operacionResta)
+            return operacion 
+        } 
     }
 }

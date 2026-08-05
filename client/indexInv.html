@@ -9,7 +9,8 @@
     <title>Menu Inventario</title>
   </head>
   <body id="pag-inventario">
-
+    <a href="indexRec.html"><button>Crear Receta</button></a>
+    
     <div id="vista-menu" class="vista-pagina">
       <header class="card" id="card-titulo">
         <h1>Inventario Principal</h1>
@@ -182,11 +183,11 @@
             <div class="grid-2-col">
               <div class="grupo-input">
                 <label for="edit-cantidad">Cantidad nueva</label>
-                <input type="number" min="0" id="edit-cantidad" name="cantidad_botellas" required>
+                <input type="number" min="0" id="edit-cantidad" name="cantidad_botellas" placeholder="Cant. Botellas Nuevas" required>
               </div>
             <div class="grupo-input">
               <label for="edit-precio">Precio Nuevo</label>
-              <input type="number" step="0.01" id="edit-precio" name="precio" required>
+              <input type="number" step="0.01" id="edit-precio" placeholder="Si aplica..." name="precio">
             </div>
       </div>
 
@@ -203,6 +204,6 @@
       </div>
     </div>
 
-    <script type="module" src="/src/main.ts"></script>
+    <script type="module" src="/src/pages/inventario.ts"></script>
   </body>
 </html>

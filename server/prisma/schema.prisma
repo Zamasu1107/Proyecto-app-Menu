@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model Usuario {
+  id                   String                 @id @default(uuid()) @db.Char(36)
+  username             String                 @unique(map: "nombre") @db.VarChar(100)
+  rol                  Role                   @default(ADMIN)
+  password             String                 @db.VarChar(50)
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Ingrediente {
+  id                   String                 @id @default(uuid()) @db.Char(36)
+  nombre               String                 @unique(map: "nombre") @db.VarChar(100)
+  tipo_insumo          String                 @db.VarChar(50)
+  cantidad_ml          Decimal                @db.Decimal(10, 2)
+  unidad_medida        String                 @db.VarChar(20)
+  precio               Decimal                @db.Decimal(10, 2)
+  porcentaje_alcohol   Decimal?               @db.Decimal(4, 1)
+  marca                String?                @db.VarChar(50)
+  tipo_alcohol         String?                @db.VarChar(20)
+  cantidad_botellas    Int?                   @default(1)
+  activo               Boolean                @default(true)
+  recetas_ingredientes recetas_ingredientes[]
+  Historial_recetas    Historial_recetas[]
+}
+
+model Receta {
+  id                   String                 @id @default(uuid()) @db.Char(36)
+  nombre               String?                @unique(map: "nombre") @db.VarChar(100)
+  imageRF              String?                @db.Text
+  link_Youtube         String?                @db.Text
+  precio               Decimal?               @db.Decimal(10, 2)
+  categoria            String                 @db.VarChar(25) 
+  recetas_ingredientes recetas_ingredientes[]
+  Historial_recetas    Historial_recetas[]
+}
+
+model recetas_ingredientes {
+  id_receta          String      @db.Char(36)
+  id_ingrediente     String      @db.Char(36)
+  cantidad_necesaria Decimal
+  cantidad_medida    String      @db.VarChar(20)
+  receta             Receta      @relation(fields: [id_receta], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ingrediente        Ingrediente @relation(fields: [id_ingrediente], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([id_receta, id_ingrediente])
+  @@index([id_ingrediente])
+}
+
+model Historial_recetas {
+  id                       String                 @id @default(uuid()) @db.Char(36)
+  recetaId                 String                 @db.Char(36)
+  ingredienteId            String                 @db.Char(36)
+  cantidad_descont         Decimal                @db.Decimal(10,2)
+  fecha_preparacion        DateTime               @default(now())
+  receta                   Receta                 @relation(fields: [recetaId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ingrediente              Ingrediente            @relation(fields: [ingredienteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@index([ingredienteId])
+  @@index([fecha_preparacion])
+}

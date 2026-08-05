@@ -1,11 +1,9 @@
 import { obtenerIngredientes } from "../services/ingredientesService";
-import type { Ingrediente } from "../types/interfaces";
+import type { Ingdinamico, Ingrediente } from "../types/interfaces";
 
 const barraBusqueda = document.getElementById('id-barra-busqueda') as HTMLInputElement
-const cajaBusqueda = document.getElementById('menu-Busqueda') as HTMLDivElement
-const menu = document.getElementById('menu-Busqueda') as HTMLDivElement
+const menuBusqueda = document.getElementById('menu-Busqueda') as HTMLDivElement
 const tabla = document.getElementById('ing-dinamicos') as HTMLTableElement
-const botonAñadir = document.getElementById('btn-barra-busqueda') as HTMLButtonElement
 
 let catalogoIng:Ingrediente[] = []
 
@@ -14,25 +12,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.log("Inventario cargado en memoria listo para buscar:", catalogoIng);
 });
 
-function pintarTabla(ingFiltrados:Ingrediente[]) {
+function pintarTabla(ingFiltrados:Ingdinamico[]) {
     let htmlDin = ''
-    ingFiltrados.map(nuevoIng => {
-        htmlDin +=` <tr>
+
+    console.log('Esto es filtroTabla', ingFiltrados);
+    
+    ingFiltrados.forEach(nuevoIng => {
+        htmlDin +=` <tr class="filaIng" data-id="${nuevoIng.id}">
                         <td>
-                            <button class="btn-quitarIng"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <button data-id="${nuevoIng.id}" class="btn-quitarIng"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>  
                             </button>
                         </td>
                             <td class="nombre-tabla" data-id="${nuevoIng.id}">${nuevoIng.nombre}</td>
-                            <td><input type="number" min="1" placeholder="ml" required></td>
+                            <td><input type="number" min="1" placeholder="Cant" class="cantidadIng" value="${nuevoIng.cantidad_necesaria || ''}" required></td>
+                            <td class="medida-tabla"><select class="select-medida" name="medida" required>
+                                                        <option value="" selected disabled>Medida</option>
+                                                        <option value="ml">ml</option>
+                                                        <option value="onzas">onzas</option></select></td>
                     </tr>`
     })
     if (tabla) {
-        tabla.innerHTML = htmlDin;
+        tabla.innerHTML = htmlDin;  
+        }
     }
-}
 
+const tablainput = document.getElementById('tabla') as HTMLTableElement
+     
 function filtrarIng() {
 
     if (!catalogoIng || catalogoIng.length === 0) {
@@ -44,23 +51,128 @@ function filtrarIng() {
         resultado = catalogoIng.filter((producto:Ingrediente) => {return producto.nombre.toLowerCase().includes(textoBusqueda)})
     }
     mostrarResultado(resultado);
-    pintarTabla(resultado);
-
+    console.log('Esto es resultado', resultado);
 }
 
 function mostrarResultado (resultado:Ingrediente[]) {
     if (resultado.length) {
-        menu.classList.remove('oculto');
+        menuBusqueda.classList.remove('oculto');
     }else {
-        menu.classList.add('oculto');
+        menuBusqueda.classList.add('oculto');
     }
     const contenido = resultado.map((item) => {
         return `<li class="item-busqueda" data-id="${item.id}">${item.nombre}</li>`
     })
-    cajaBusqueda.innerHTML = `<ul>${contenido.join('')}</ul>`
+    menuBusqueda.innerHTML = `<ul>${contenido.join('')}</ul>`
 
 
 }
 barraBusqueda.addEventListener('input', filtrarIng)
 
+let listaIng:Ingdinamico[]= []
 
+const btnGuardar = document.getElementById('btn-principal') as HTMLButtonElement
+
+menuBusqueda.addEventListener(('click'), (Event: MouseEvent) => {
+    const elementoLi = (Event.target as HTMLElement).closest('li');
+    if (elementoLi) {
+        if (!listaIng.find(id => id.id === elementoLi.getAttribute('data-id')!)) {
+            listaIng.push({id: elementoLi.getAttribute('data-id')!, nombre: elementoLi.textContent});
+            barraBusqueda.value = '';
+            menuBusqueda.classList.add('oculto');
+        }
+
+    }
+    
+    if (listaIng.length !== 0) {
+        btnGuardar.disabled = false
+    }
+    pintarTabla(listaIng);
+    console.log('Esto es listINg', listaIng);
+    
+})
+
+tablainput.addEventListener('input', (Event:Event) => {
+    const target = Event.target as HTMLElement
+    const fila = target.closest('tr')
+    const inputActual = fila?.dataset.id
+    const ingredienteEncontrado = (listaIng.find(ingredienteActual => ingredienteActual.id === inputActual))
+
+        if (ingredienteEncontrado && fila) {
+            const cantidadActual = fila.querySelector('input[type="number"]') as HTMLInputElement
+            const medidaActual = fila.querySelector('select') as HTMLSelectElement
+            if (cantidadActual) {
+                ingredienteEncontrado.cantidad_necesaria = Number(cantidadActual.value);
+            }
+            if (medidaActual) {
+                ingredienteEncontrado.cantidad_medida = medidaActual.value
+            }      
+        } 
+    })
+
+tablainput.addEventListener('click', (Event:MouseEvent) =>{
+    const btnEliminar = (Event.target as HTMLButtonElement).closest('button.btn-quitarIng')
+    if (Event.target) {
+        if (btnEliminar) {
+            const ingActual = (Event.target as HTMLTableElement).closest('tr')?.dataset.id
+            const borrarIngrediente = listaIng.filter(ingrediente => ingrediente.id !== ingActual)
+            listaIng = borrarIngrediente
+            if (listaIng.length === 0){
+                btnGuardar.disabled = true
+            }
+            pintarTabla(listaIng);
+        }
+    }     
+})
+
+let fotoBase64: string = "";
+
+const inputFoto = document.getElementById('input-foto-receta') as HTMLInputElement;
+const previewFoto = document.getElementById('preview-foto') as HTMLImageElement;
+const placeholderFoto = document.getElementById('placeholder-foto') as HTMLDivElement;
+
+inputFoto?.addEventListener('change', (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        const archivo = target.files[0];
+
+        // Usamos FileReader para convertir la imagen local a Base64 String
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+            fotoBase64 = event.target?.result as string;
+
+            // Rellenamos la imagen de vista previa y ocultamos el placeholder
+            previewFoto.src = fotoBase64;
+            previewFoto.classList.remove('oculto');
+            placeholderFoto.classList.add('oculto');
+        };
+
+        reader.readAsDataURL(archivo); // Inicia la lectura del archivo
+    }
+});
+
+const formReceta = document.getElementById('form-receta-cabezera') as HTMLFormElement
+
+formReceta.addEventListener('submit', async (Event:Event) => {
+    Event.preventDefault();
+    const recetaNueva = new FormData(formReceta)
+    recetaNueva.append('ingredientes', JSON.stringify(listaIng) )
+
+    console.log(recetaNueva);
+    
+    try {
+        await fetch('http://localhost:1001/api/recetas', {
+          method: 'POST',
+          headers: {
+          },
+          body: recetaNueva
+        })
+    
+        formReceta.reset();
+        listaIng = []
+        pintarTabla(listaIng)
+      } catch (error) {
+        console.error("Error al enviar los datos al Servidor:", error);
+      } 
+})

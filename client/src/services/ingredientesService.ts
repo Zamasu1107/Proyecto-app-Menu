@@ -1,5 +1,3 @@
-import type { Ingrediente } from "../types/interfaces";
-
 export async function obtenerIngredientes () {
   try {
     const respuesta = await fetch('http://localhost:1001/api/ingredientes')

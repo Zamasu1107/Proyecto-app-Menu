@@ -14,19 +14,60 @@
         </header>
     </div>
     <main>
+        
         <article id="form-base">
-            <form action="POST" id="form-receta-cabezera" class="forms-recetas">
-                <label for="nombre">Nombre de la Receta</label>
-                    <input type="text" name="nombre" id="nombre-input" required>
-                <label for="precio-venta">Precio de Venta</label>
-                    <input type="number" name="precio-venta" id="precio-input" min="1" required>
-                <label for="categoria">Categoria</label>
-                <select name="categoria" id="tipo-receta" required>
-                    <option value="Mixologia">Mixologia</option>
-                    <option value="Clasicos">Clasicos</option>
-                    <option value="Shots">Shots</option>
-                    <option value="Cafe">Cafe</option>
-                </select>
+            <form action="POST" id="form-receta-cabezera"  class="forms-recetas">
+                
+                <!-- GRID CABECERA: FOTO A LA IZQUIERDA, NOMBRE Y PRECIO A LA DERECHA -->
+                <div class="grid-cabecera">
+                    
+                    <div class="contenedor-upload-img">
+                        <label for="input-foto-receta" id="dropzone-foto">
+                            <!-- Vista previa oculta con la clase .oculto por defecto -->
+                            <img id="preview-foto" src="" alt="Vista previa" class="oculto">
+                            
+                            <div id="placeholder-foto">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                <span>Subir Foto</span>
+                            </div>
+                        </label>
+                        <!-- ESTE ES EL INPUT QUE SE OCULTARÁ CON EL CSS -->
+                        <input type="file" id="input-foto-receta" name="imagenRF" accept="image/*" >
+                    </div>
+
+                    <div class="columna-campos">
+                        <div class="grupo-input">
+                            <label for="nombre">Nombre de la Receta</label>
+                            <input type="text" name="nombre" id="nombre-input" required>
+                        </div>
+
+                        <div class="grupo-input">
+                            <label for="precio-venta">Precio de Venta</label>
+                            <input type="number" name="precio" id="precio-input" min="1" required>
+                        </div>
+                    </div>
+
+                </div> <!-- Fin grid-cabecera -->
+
+                <!-- GRID DE 2 COLUMNAS: CATEGORÍA Y YOUTUBE -->
+                <div class="grid-2-col">
+                    <div class="grupo-input">
+                        <label for="categoria">Categoría</label>
+                        <select name="categoria" id="tipo-receta" required>
+                            <option value="" selected disabled>Selecciona una opción</option>
+                            <option value="Mixologia">Mixología</option>
+                            <option value="Clasicos">Clásicos</option>
+                            <option value="Shots">Shots</option>
+                            <option value="Cafe">Café</option>
+                        </select>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="youtube">Link de YouTube (Opcional)</label>
+                        <input type="url" name="link_Youtube" id="youtube-input" placeholder="https://youtube.com/watch?v=...">
+                    </div>
+                </div>
+
                 <button type="submit" id="btn-principal" disabled>Guardar Receta</button>
             </form>
         </article>
@@ -38,28 +79,19 @@
                     <div class="autocompletado oculto" id="menu-Busqueda">
                     </div>
                 </div>
-                <button id="btn-barra-busqueda">Añadir Ingrediente</button>
             </div>
 
             <div class="container" id="tabla-ingredientes">
-                <table class="tabla-dinamica">
+                <table class="tabla-dinamica" id="tabla">
                     <thead>
                         <tr>
                         <th></th>
                         <th>Ingrediente</th>
                         <th>Cantidad</th>
+                        <th>Medida</th>
                         </tr>
                     </thead>
                     <tbody id="ing-dinamicos">
-                        <tr>
-                            <td><button class="btn-quitarIng"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>  
-                                </button>
-                            </td>
-                            <td id="nombre-tabla">Absolut Vodka</td>
-                            <td><input type="number" min="1" placeholder="ml" required></td>
-                        </tr>
                     </tbody>
                 </table>
             </div>

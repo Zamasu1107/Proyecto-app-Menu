@@ -1,5 +1,3 @@
-import { RowDataPacket } from "mysql2/promise";
-
 export interface Ingredientes {
     nombre:string; 
     tipo_insumo:string;
@@ -10,11 +8,27 @@ export interface Ingredientes {
     marca: string | null; 
     tipo_alcohol:string | null;
     cantidad_botellas: number | 1;
-    activo:number | 1;
+    activo:boolean;
 }
 
-export interface ValidarDatos extends RowDataPacket {
+export interface IngredientesRec {
     id:string;
     nombre:string; 
-    activo: number | 0;
+    cantidad_necesaria: number;
+    cantidad_medida: string;
+}
+
+export interface ValidarRec {
+    nombre: string;
+    precio: number;
+    categoria: string;
+    imageRF: string;
+    link_Youtube: string;
+    ingredientes: IngredientesRec[];
+}
+
+export interface MiPayload {
+    id: string;
+    username: string;
+    rol: string;
 }

@@ -25,5 +25,8 @@
     "verbatimModuleSyntax": false,
 
     "skipLibCheck": true
-  }
+  },
+  "exclude": [
+    "prisma.config.ts"
+  ]
 }

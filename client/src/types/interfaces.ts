@@ -25,3 +25,19 @@ export interface EditForm {
   precio: number;
   cantidad_botellas: number | null
 }
+
+export interface Ingdinamico {
+  id?:string;
+  nombre?: string;
+  cantidad_medida?: string;
+  cantidad_necesaria?:number | null;
+}
+
+export interface Receta {
+  nombre: string;
+  precio:number | null;
+  categoria:string;
+  imageRF: string;
+  link_Youtube : string;
+  ingredientes: Ingdinamico[];
+}

@@ -1,5 +1,4 @@
 import { obtenerIngredientes } from "../services/ingredientesService";
-import { obtenerRecetas } from "../services/recetasServices";
 import type { DatosForm, EditForm, Ingrediente } from "../types/interfaces";
 
 let datosGlobales:Ingrediente[] = []
@@ -8,7 +7,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     datosGlobales = await obtenerIngredientes();
     console.log("Inventario cargado en memoria listo para buscar:", datosGlobales);
 });
-obtenerRecetas();
 
 const tipos = document.getElementById('tipo-producto') as HTMLSelectElement;
 const contenedorDestilados = document.getElementById('seccion-destilados') as HTMLDivElement;
@@ -82,8 +80,6 @@ form.addEventListener('submit', async (Event:Event) => {
     cantidad_botellas: Number(formIng.get('cantidad-botellas'))
   }
 
-  console.log(datosNuevos.marca)
- 
   if (tipos.value !== 'destilados') {
     datosNuevos.tipo_alcohol = null;
   } if (tipos.value !== 'destilados' && tipos.value !== 'licores') {
@@ -99,7 +95,7 @@ form.addEventListener('submit', async (Event:Event) => {
     })
 
     form.reset();
-    obtenerIngredientes();
+    datosGlobales = await obtenerIngredientes();
   } catch (error) {
     console.error("Error al enviar los datos al Servidor:", error);
   } 
@@ -182,7 +178,7 @@ function renderizarCards(ingredientesFiltrados:Ingrediente[]) {
             })
 
             editForm.reset();
-
+            datosGlobales = await obtenerIngredientes();
             document.getElementById('modal-editar-prod')?.classList.add('oculto');
           } catch (error) {
             console.error("Error al enviar los datos al Servidor:", error);
@@ -207,7 +203,6 @@ function actualizarPagina(event:Event) {
   window.scrollTo({ top: 0, behavior: 'instant' });
 
   const target = event.currentTarget as HTMLElement;
-
   let idArticulo = target.id;
   const ingredientesFiltrados = datosGlobales.filter((ingrediente:Ingrediente) => ingrediente.tipo_insumo.toLowerCase() === idArticulo);
 
@@ -237,9 +232,10 @@ botonEliminar.addEventListener('click', async (_Event:Event) => {
             })
             document.getElementById('modal-editar-prod')?.classList.add('oculto');
             let datos = datosGlobales.filter((ingrediente:Ingrediente) => ingrediente.id !== idProducto);
+            datosGlobales = datos
 
             // 4. Volvemos a dibujar las tarjetas en el HTML usando la lista limpia
-            renderizarCards(datos);
+            renderizarCards(datosGlobales);
   } catch (error) {
     console.error("Error al enviar los datos al Servidor:", error);
   }

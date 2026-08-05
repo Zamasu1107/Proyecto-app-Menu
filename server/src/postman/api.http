@@ -2,11 +2,15 @@ GET http://localhost:1001/api/ingredientes
 
 ###
 
+GET http://localhost:1001/api/recetas
+
+###
+
 POST http://localhost:1001/api/ingredientes
 Content-Type: application/json
 
 {
-    "nombre":"Will Turners", 
+    "nombre":"William Turner", 
     "tipo_insumo":"Destilados", 
     "cantidad_ml":500, 
     "unidad_medida":"ml", 
@@ -14,10 +18,14 @@ Content-Type: application/json
 }
 
 ### Actualizar
-PATCH http://localhost:1001/api/ingredientes/11f18491-a587-a297-9d5b-a0ad9f862f68
+PATCH http://localhost:1001/api/ingredientes/33156f30-e002-40ed-aaff-7ff9a89b148e
 Content-Type: application/json
 
 {
     "cantidad_botellas" : 5
 }
+
+### Borrar
+
+PATCH  http://localhost:1001/api/ingredientes/fe9ed862-f2d8-42cb-97dd-113bc40a30cb
 

@@ -144,23 +144,6 @@ article {
     border-color: #e6c594;
 }
 
-#btn-barra-busqueda {
-    background-color: rgba(230, 197, 148, 0.12);
-    border: 1px solid #e6c594;
-    color: #e6c594;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-#btn-barra-busqueda:hover {
-    background-color: #e6c594;
-    color: #170d08;
-}
 
 /* --- TABLA DINÁMICA DE INGREDIENTES --- */
 .tabla-dinamica {
@@ -242,6 +225,66 @@ article {
 .tabla-dinamica .btn-quitarIng path,
 .tabla-dinamica .btn-quitarIng line {
     pointer-events: none;
+}
+
+.tabla-dinamica th:nth-child(1), 
+.tabla-dinamica td:nth-child(1) {
+    width: 40px;
+    text-align: center;
+}
+
+/* Columna 2: Nombre del Ingrediente (Toma el espacio principal sobrante) */
+.tabla-dinamica th:nth-child(2), 
+.tabla-dinamica td:nth-child(2) {
+    width: auto;
+}
+
+/* Columna 3: Cantidad (Ancho compacto) */
+.tabla-dinamica th:nth-child(3), 
+.tabla-dinamica td:nth-child(3) {
+    width: 90px;
+    text-align: center;
+}
+
+/* Columna 4: Medida (Ancho compacto) */
+.tabla-dinamica th:nth-child(4), 
+.tabla-dinamica td:nth-child(4) {
+    width: 85px;
+    text-align: center;
+}
+
+
+/* --- ESTILOS PARA EL SELECT DE MEDIDA --- */
+.tabla-dinamica select.select-medida {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(230, 197, 148, 0.25);
+    border-radius: 6px;
+    padding: 6px 4px;
+    color: #ffffff;
+    font-size: 0.85rem;
+    text-align: center;
+    cursor: pointer;
+    
+    /* Custom arrow styling */
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e6c594' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+    background-repeat: no-repeat;
+    background-position: right 4px center;
+    background-size: 12px;
+    padding-right: 18px;
+}
+
+.tabla-dinamica select.select-medida:focus {
+    outline: none;
+    border-color: #e6c594;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.tabla-dinamica select.select-medida option {
+    background-color: #170d08;
+    color: #ffffff;
 }
 
 #barra-busqueda {
@@ -334,4 +377,112 @@ article {
 .autocompletado::-webkit-scrollbar-thumb {
     background: #854f1d;
     border-radius: 4px;
+}
+
+
+
+.grid-cabecera {
+    display: grid;
+    grid-template-columns: 130px 1fr; /* Columna fija para foto + espacio para texto */
+    gap: 16px;
+    align-items: center;
+}
+
+.columna-campos {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.grid-2-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* --- RECUADRO DE CÁRGAME DE IMAGEN (DROPZONE) --- */
+.contenedor-upload-img {
+    width: 100%;
+    height: 130px;
+}
+
+#dropzone-foto {
+    width: 100%;
+    height: 100%;
+    border: 2px dashed rgba(230, 197, 148, 0.35); /* Borde punteado cobre */
+    border-radius: 14px;
+    background-color: rgba(255, 255, 255, 0.02);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.25s ease;
+}
+
+#dropzone-foto:hover {
+    border-color: #e6c594;
+    background-color: rgba(230, 197, 148, 0.08);
+}
+
+/* Contenido del Placeholder */
+#placeholder-foto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: #e6c594;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+#placeholder-foto svg {
+    stroke: #e6c594;
+}
+
+/* Imagen de Vista Previa una vez cargada */
+#preview-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Evita que la imagen subida se deforme */
+    border-radius: 12px;
+}
+
+#input-foto-receta {
+    display: none !important;
+}
+
+/* 2. CLASE UNIVERSAL PARA OCULTAR ELEMENTOS (Como la vista previa antes de subir la foto) */
+.oculto {
+    display: none !important;
+}
+
+/* 3. ASEGURAR QUE LOS GRUPOS DE INPUTS DENTRO DE LOS GRIDS OCUPEN SU COLUMNA CORRECTA */
+.columna-campos .grupo-input,
+.grid-2-col .grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.columna-campos input,
+.grid-2-col input,
+.grid-2-col select {
+    width: 100%;
+}
+
+/* 4. RESPONSIVIDAD EN PANTALLAS PEQUEÑAS (Si el ancho del celular es muy angosto) */
+@media (max-width: 400px) {
+    .grid-cabecera,
+    .grid-2-col {
+        grid-template-columns: 1fr; /* Pasa a 1 columna si el espacio es muy reducido */
+    }
+    
+    .contenedor-upload-img {
+        height: 120px;
+    }
 }
