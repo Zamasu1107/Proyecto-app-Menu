@@ -1,0 +1,564 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Montserrat:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    /* Fondo negro profundo con destello dorado difuminado arriba */
+    background: radial-gradient(circle at top, #2b1d0c 0%, #0d0905 45%, #050302 100%);
+    background-attachment: fixed;
+    color: #e6c594; /* Dorado elegante */
+    font-family: 'Montserrat', sans-serif;
+    padding: 20px 12px 40px 12px;
+    display: flex;
+    justify-content: center;
+}
+
+main {
+    width: 100%;
+    max-width: 900px; /* Ancho perfecto para desktop, adaptable a celular */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- ENCABEZADO TIPO CANTINA / BAR DE AUTOR --- */
+header {
+    text-align: center;
+    padding: 10px 0;
+}
+
+header h1 {
+    font-family: 'Cinzel', serif; /* Fuente clásica serif elegante */
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #f3d7a8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 0 0 15px rgba(243, 215, 168, 0.3);
+}
+
+header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #b8925d;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-top: -4px;
+}
+
+/* --- SECCIÓN DE BÚSQUEDA Y FILTROS --- */
+#card-Nav-Busqueda {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+/* Input de Búsqueda */
+#barra-busqueda {
+    width: 100%;
+    background-color: rgba(15, 10, 6, 0.7);
+    border: 1px solid rgba(230, 197, 148, 0.3);
+    border-radius: 30px;
+    padding: 14px 20px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+#barra-busqueda::placeholder {
+    color: #8c7353;
+}
+
+#barra-busqueda:focus {
+    border-color: #f3d7a8;
+    box-shadow: 0 0 12px rgba(243, 215, 168, 0.25);
+}
+
+#barra-nav::-webkit-scrollbar {
+    display: none; /* Oculta scrollbar en Chrome/Safari */
+}
+
+/* --- CUADRÍCULA DE COCTELES (INTERFAZ RECS) --- */
+.interfaz-recs {
+    display: grid;
+    /* En celular son 2 columnas (como en el boceto de tu hermano) y en compu son 3 o 4 */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+@media (min-width: 768px) {
+    .interfaz-recs {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .interfaz-recs {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* TARJETA INDIVIDUAL DE CÓCTEL */
+.card-rec {
+    background-color: rgba(18, 12, 7, 0.65);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(230, 197, 148, 0.2);
+    border-radius: 16px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+    transition: all 0.3s ease;
+}
+
+.card-rec:hover {
+    border-color: rgba(243, 215, 168, 0.6);
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(230, 197, 148, 0.15);
+}
+
+/* Imagen del Cóctel */
+.card-rec img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid rgba(230, 197, 148, 0.15);
+}
+
+/* Título del Cóctel (~MOJITO CLÁSICO~) */
+.card-rec h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #f3d7a8;
+    margin-top: 4px;
+    letter-spacing: 1px;
+}
+
+/* Categoría / Ingredientes cortos */
+.card-rec h4 {
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: #a89173;
+    line-height: 1.2;
+}
+
+/* Precio */
+.card-rec p {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #e6c594;
+    margin-top: auto; /* Empuja el precio siempre al final de la tarjeta */
+}
+
+#barra-nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Crea exactamente 4 columnas por fila */
+    gap: 10px;
+    list-style: none;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+#barra-nav li {
+    background-color: rgba(230, 197, 148, 0.04);
+    border: 1px solid rgba(58, 55, 51, 0.22);
+    color: #e6c594;
+    padding: 10px 12px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+    user-select: none;
+}
+
+#barra-nav li:hover {
+    background-color: rgba(230, 197, 148, 0.18);
+    border-color: #f3d7a8;
+    color: #ffffff;
+    box-shadow: 0 0 10px rgba(243, 215, 168, 0.2);
+    transform: translateY(-2px);
+}
+
+/* Alineación e interacción del SVG */
+#barra-nav li svg {
+    stroke: #e6c594;
+    flex-shrink: 0;
+    transition: stroke 0.25s ease;
+}
+
+#barra-nav li:hover svg {
+    stroke: #ffffff;
+}
+
+/* RESPONSIVIDAD: En celulares pequeños pasa a 2 columnas por fila para mantener botones legibles */
+@media (max-width: 480px) {
+    #barra-nav {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    #barra-nav li {
+        padding: 8px 10px;
+        font-size: 0.72rem;
+    }
+}
+
+/* --- MODAL FLOTANTE DE DETALLE DE RECETA --- */
+#receta-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    /* Fondo oscuro traslúcido con efecto de desenfoque de fondo */
+    background-color: rgba(5, 3, 2, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    overflow-y: auto; /* Permite scroll si la pantalla del cel es corta */
+    box-sizing: border-box;
+}
+
+#receta-modal.oculto {
+    display: none !important;
+}
+
+/* BOTÓN DE REGRESAR AL MENÚ */
+#btn-regresar-menu {
+    align-self: flex-start;
+    background: transparent;
+    border: 1px solid rgba(230, 197, 148, 0.3);
+    color: #e6c594;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: all 0.25s ease;
+}
+
+#btn-regresar-menu:hover {
+    background-color: #854f1d;
+    color: #ffffff;
+    border-color: #854f1d;
+}
+
+/* ENCABEZADO Y TÍTULO DE LA RECETA (~MOJITO CLÁSICO~) */
+#receta-modal header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#receta-modal header h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    color: #f3d7a8;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+/* --- SECCIÓN PRINCIPAL: FOTO A LA IZQUIERDA, INGREDIENTES A LA DERECHA --- */
+#info-General {
+    display: grid;
+    grid-template-columns: 140px 1fr; /* Columna fija para foto + texto */
+    gap: 20px;
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 20px;
+}
+
+/* #imagen-rec {
+    width: 100%;
+    height: 190px;
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid rgba(230, 197, 148, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+#imagen-rec img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+} */
+
+#imagen-rec {
+    width: 140px;      /* Ancho fijo para mantener la simetría con los ingredientes */
+    height: 190px;     /* Alto proporcional elegante */
+    border-radius: 14px;
+    overflow: hidden;  /* Recorta cualquier exceso de la imagen */
+    border: 1px solid rgba(230, 197, 148, 0.3);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+    flex-shrink: 0;    /* Evita que el contenedor se aplaste si hay muchos ingredientes */
+}
+
+#imagen-rec img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;       /* ¡LA CLAVE! Llena el recuadro sin deformarse */
+    object-position: center;  /* Centra la atención en el medio de la fotografía */
+}
+
+/* DETALLES Y LISTA DE INGREDIENTES */
+#info-rec {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#info-rec h4 {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #b8925d;
+}
+
+#lista-ing {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+/* Viñeta dorada personalizada para cada ingrediente */
+#lista-ing li::before {
+    content: "•";
+    color: #e6c594;
+    font-size: 1.1rem;
+}
+
+/* PRECIO DESTACADO EN LA ESQUINA INFERIOR */
+#precio {
+    margin-top: auto;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #f3d7a8;
+    text-align: right;
+}
+
+/* --- TARJETA DE LINK A YOUTUBE --- */
+.card-youtube-link {
+    width: 100%;
+    max-width: 480px;
+    margin-top: 10px;
+}
+
+.btn-youtube {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(230, 197, 148, 0.05);
+    border: 1px solid rgba(230, 197, 148, 0.3);
+    border-radius: 12px;
+    padding: 14px 18px;
+    color: #e6c594;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+.btn-youtube:hover {
+    background-color: rgba(230, 197, 148, 0.15);
+    border-color: #f3d7a8;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(243, 215, 168, 0.2);
+}
+
+.btn-youtube svg {
+    fill: #e6c594;
+    transition: fill 0.25s ease;
+}
+
+.btn-youtube:hover svg {
+    fill: #ff0000; /* El icono de YouTube se ilumina en rojo al pasar el cursor */
+}
+
+/* RESPONSIVIDAD PARA CELULARES MUY ANGOSTOS */
+@media (max-width: 400px) {
+    #info-General {
+        grid-template-columns: 1fr; /* Coloca la foto arriba e ingredientes abajo si no cabe */
+    }
+    
+    #imagen-rec {
+        height: 160px;
+    }
+}
+
+/* --- LISTA DE INGREDIENTES DEL MODAL (Alineación Izq - Der) --- */
+/* --- LISTA DE INGREDIENTES DEL MODAL (Alineación Izq - Der) --- */
+#lista-ing {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espacio vertical entre cada ingrediente */
+    width: 100%;
+}
+
+#lista-ing li {
+    display: flex;
+    justify-content: space-between; /* Empuja el nombre a la izq y la cantidad a la der */
+    align-items: center;
+    font-size: 0.88rem;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed rgba(230, 197, 148, 0.15); /* Línea punteada sutil elegantísima */
+}
+
+/* Primer span: Nombre del ingrediente */
+#lista-ing li span:first-child {
+    color: #f2e9e1;
+    font-weight: 500;
+    text-align: left;
+    margin-right: auto;
+    padding: 2px;
+}
+
+/* Segundo span: Cantidad y Medida (Ej: 50 ml / 1.5 oz) */
+#lista-ing li span:last-child {
+    color: #e6c594; /* Color dorado/cobre para resaltar la medida */
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* --- CONTENEDOR DEL BOTÓN PRINCIPAL DE PEDIDO --- */
+.card-btn-preparar {
+    width: 100%;
+    max-width: 480px;
+    margin-top: 16px;
+}
+
+/* BOTÓN PEDIR BEBIDA (CTA PRINCIPAL) */
+.preparar-receta {
+    width: 100%;
+    /* Degradado metálico oro/cobre de alta gama */
+    background: linear-gradient(135deg, #f3d7a8 0%, #b8860b 50%, #854f1d 100%);
+    border: none;
+    color: #0d0804; /* Texto en tono oscuro para máximo contraste */
+    padding: 16px 20px;
+    border-radius: 14px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    /* Resplandor elegante en tono dorado */
+    box-shadow: 0 4px 20px rgba(243, 215, 168, 0.35);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* EFECTO HOVER (Al pasar el mouse o tocar en cel) */
+.preparar-receta:hover {
+    background: linear-gradient(135deg, #ffffff 0%, #f3d7a8 50%, #a36224 100%);
+    color: #000000;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(243, 215, 168, 0.55);
+}
+
+/* EFECTO PRESS (Feedback táctil al presionar) */
+.preparar-receta:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 0 2px 10px rgba(243, 215, 168, 0.3);
+}
+
+/* SVG DENTRO DEL BOTÓN */
+.preparar-receta svg {
+    stroke: #0d0804; /* Mantiene el icono del mismo color que el texto */
+    transition: transform 0.3s ease;
+}
+
+.preparar-receta:hover svg {
+    transform: rotate(-10deg) scale(1.1); /* Ligero giros animado al pasar el cursor */
+}
+
+/* --- BARRA DE NAVEGACIÓN FLOTANTE (BOTTOM NAV) --- */
+#cambiar_pag {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* Lo centra exactamente en horizontal */
+    display: flex;
+    gap: 12px;
+    background-color: rgba(18, 14, 10, 0.85); /* Fondo oscuro coherente con el bar */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(133, 79, 29, 0.35); /* Borde tono licor */
+    padding: 8px 12px;
+    border-radius: 30px; /* Estilo cápsula/píldora */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    z-index: 999; /* Se mantiene siempre sobre las tarjetas de la página */
+    width: max-content;
+}
+
+/* ESTILOS PARA CADA ENLACE/BOTÓN */
+#cambiar_pag .btn-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #e6c594; /* Tono cálido/cobre refinado */
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(230, 197, 148, 0.15);
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+#cambiar_pag .btn-nav:hover {
+    background-color: #854f1d;
+    color: #ffffff;
+    border-color: #854f1d;
+    box-shadow: 0 0 12px rgba(133, 79, 29, 0.4);
+    transform: translateY(-2px);
+}
+
+#cambiar_pag .btn-nav:active {
+    transform: translateY(0);
+}
+
+#cambiar_pag .btn-nav.pagina-actual {
+    background-color: rgba(230, 197, 148, 0.18);
+    border-color: #f3d7a8;
+    color: #ffffff;
+}

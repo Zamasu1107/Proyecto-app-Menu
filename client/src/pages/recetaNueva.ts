@@ -1,4 +1,5 @@
 import { obtenerIngredientes } from "../services/ingredientesService";
+import { obtenerRecetas } from "../services/recetasServices";
 import type { Ingdinamico, Ingrediente } from "../types/interfaces";
 
 const barraBusqueda = document.getElementById('id-barra-busqueda') as HTMLInputElement
@@ -10,6 +11,7 @@ let catalogoIng:Ingrediente[] = []
 document.addEventListener('DOMContentLoaded', async () => {
     catalogoIng = await obtenerIngredientes();
     console.log("Inventario cargado en memoria listo para buscar:", catalogoIng);
+    const recetas = await obtenerRecetas();
 });
 
 function pintarTabla(ingFiltrados:Ingdinamico[]) {
@@ -29,12 +31,41 @@ function pintarTabla(ingFiltrados:Ingdinamico[]) {
                             <td><input type="number" min="1" placeholder="Cant" class="cantidadIng" value="${nuevoIng.cantidad_necesaria || ''}" required></td>
                             <td class="medida-tabla"><select class="select-medida" name="medida" required>
                                                         <option value="" selected disabled>Medida</option>
-                                                        <option value="ml">ml</option>
-                                                        <option value="onzas">onzas</option></select></td>
+                                                        <optgroup label="VOLUMEN">
+                                                            <option value="ml">Ml</option>
+                                                            <option value="oz">Oz</option>
+                                                            <option value="L">Ltr</option>
+                                                            <option value="dash">Dash</option>
+                                                            <option value="shot">Shot</option>
+                                                            <option value="cucharada">Cucharada</option>
+                                                            <option value="cucharadita">Cucharadita</option>
+                                                            <option value="taza">Taza</option>
+                                                        </optgroup>
+                                                        <optgroup label="PESO">
+                                                            <option value="g">Gr</option>
+                                                            <option value="kg">Kg</option>
+                                                            <option value="lb">Lb</option>
+                                                        </optgroup>
+                                                        <optgroup label="PIEZA">
+                                                            <option value="pza">Pieza</option>
+                                                            <option value="rdj">Rodaja</option>
+                                                            <option value="hoja">Hoja</option>
+                                                            <option value="rama">Rama</option>
+                                                            <option value="twist">Twist</option>
+                                                        </optgroup>
                     </tr>`
     })
     if (tabla) {
         tabla.innerHTML = htmlDin;  
+
+        const opciones = document.querySelectorAll('optgroup')
+        const tipoFamilia = ingFiltrados[0]?.tipo_unidad
+            opciones.forEach((optG) => {
+                optG.disabled = true
+                    if (optG.label === tipoFamilia) {                        
+                        optG.disabled = false; 
+                }
+            })  
         }
     }
 
@@ -61,7 +92,7 @@ function mostrarResultado (resultado:Ingrediente[]) {
         menuBusqueda.classList.add('oculto');
     }
     const contenido = resultado.map((item) => {
-        return `<li class="item-busqueda" data-id="${item.id}">${item.nombre}</li>`
+        return `<li class="item-busqueda" data-id="${item.id}" data-extra="${item.tipo_medida}">${item.nombre}</li>`
     })
     menuBusqueda.innerHTML = `<ul>${contenido.join('')}</ul>`
 
@@ -77,7 +108,7 @@ menuBusqueda.addEventListener(('click'), (Event: MouseEvent) => {
     const elementoLi = (Event.target as HTMLElement).closest('li');
     if (elementoLi) {
         if (!listaIng.find(id => id.id === elementoLi.getAttribute('data-id')!)) {
-            listaIng.push({id: elementoLi.getAttribute('data-id')!, nombre: elementoLi.textContent});
+            listaIng.push({id: elementoLi.getAttribute('data-id')!, nombre: elementoLi.textContent, tipo_unidad: elementoLi.getAttribute('data-extra')!});
             barraBusqueda.value = '';
             menuBusqueda.classList.add('oculto');
         }
@@ -154,24 +185,31 @@ inputFoto?.addEventListener('change', (e: Event) => {
 
 const formReceta = document.getElementById('form-receta-cabezera') as HTMLFormElement
 
-formReceta.addEventListener('submit', async (Event:Event) => {
-    Event.preventDefault();
+formReceta.addEventListener('submit', async (e:Event) => {
+    e.preventDefault();
     const recetaNueva = new FormData(formReceta)
+    console.log(recetaNueva);
+
     recetaNueva.append('ingredientes', JSON.stringify(listaIng) )
 
     console.log(recetaNueva);
     
     try {
-        await fetch('http://localhost:1001/api/recetas', {
+        const respuesta = await fetch('http://localhost:1001/api/recetas', {
           method: 'POST',
+          credentials: 'include',
           headers: {
           },
           body: recetaNueva
         })
-    
-        formReceta.reset();
-        listaIng = []
-        pintarTabla(listaIng)
+        if (respuesta.ok) {
+            formReceta.reset();
+            listaIng = []
+            pintarTabla(listaIng) 
+        } else {
+            const error = await respuesta.json()
+            console.log(error);
+        }
       } catch (error) {
         console.error("Error al enviar los datos al Servidor:", error);
       } 

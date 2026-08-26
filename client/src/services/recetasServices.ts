@@ -4,6 +4,7 @@ export async function obtenerRecetas() {
     const datos = await respuesta.json();
 
     console.log("¡Conexión Exitosa! Aquí están mis recetas de MySQL:", datos)
+    return datos
   } catch (error) {
     console.error("Error al conectar con la cocina (Servidor):", error);
   }

@@ -7,29 +7,36 @@ datasource db {
   provider = "mysql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum FamiliaMedida {
+  VOLUMEN
+  PIEZA
+  PESO
+}
+
 model Usuario {
   id                   String                 @id @default(uuid()) @db.Char(36)
   username             String                 @unique(map: "nombre") @db.VarChar(100)
   rol                  Role                   @default(ADMIN)
-  password             String                 @db.VarChar(50)
-}
-
-enum Role {
-  USER
-  ADMIN
+  password             String                 @db.VarChar(200)
 }
 
 model Ingrediente {
   id                   String                 @id @default(uuid()) @db.Char(36)
   nombre               String                 @unique(map: "nombre") @db.VarChar(100)
   tipo_insumo          String                 @db.VarChar(50)
-  cantidad_ml          Decimal                @db.Decimal(10, 2)
+  cantidad_total       Decimal?               @db.Decimal(10, 2)
   unidad_medida        String                 @db.VarChar(20)
+  tipo_medida          FamiliaMedida                  
   precio               Decimal                @db.Decimal(10, 2)
   porcentaje_alcohol   Decimal?               @db.Decimal(4, 1)
   marca                String?                @db.VarChar(50)
   tipo_alcohol         String?                @db.VarChar(20)
-  cantidad_botellas    Int?                   @default(1)
+  cantidad_prod        Int                    @default(1)
   activo               Boolean                @default(true)
   recetas_ingredientes recetas_ingredientes[]
   Historial_recetas    Historial_recetas[]

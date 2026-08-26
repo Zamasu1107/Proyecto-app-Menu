@@ -1,0 +1,331 @@
+/* ==========================================================================
+   MODALES-NAV.CSS - Modales Flotantes y Barra Inferior Global
+   ========================================================================== */
+
+/* --- MODAL BACKDROP (FONDO DESENFOCADO) --- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(5, 3, 2, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+}
+
+.modal-contenido {
+    background-color: rgba(22, 13, 8, 0.92);
+    border: var(--borde-dorado-brillante);
+    border-radius: 20px;
+    padding: 24px 20px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.85);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed rgba(230, 197, 148, 0.2);
+    padding-bottom: 10px;
+}
+
+.modal-header h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.15rem;
+    color: var(--color-oro);
+}
+
+.btn-cerrar-modal {
+    background: transparent;
+    border: none;
+    color: var(--color-cobre);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.btn-cerrar-modal:hover {
+    color: #ffffff;
+}
+
+/* BOTONERA DE ACCIONES DEL MODAL */
+.modal-acciones {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.btn-guardar-modal {
+    flex: 2;
+    background: linear-gradient(135deg, #a86b32 0%, #78471d 100%);
+    border: none;
+    color: #ffffff;
+    padding: 12px;
+    border-radius: var(--radio-input);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-guardar-modal:hover {
+    background: linear-gradient(135deg, #b87a3e 0%, #8a5323 100%);
+}
+
+.btn-cancelar-modal {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--color-muted);
+    border-radius: var(--radio-input);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-cancelar-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.btn-eliminar-modal {
+    background: rgba(231, 76, 60, 0.15);
+    border: 1px solid rgba(231, 76, 60, 0.35);
+    color: #e74c3c;
+    padding: 10px 12px;
+    border-radius: var(--radio-input);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-eliminar-modal:hover {
+    background-color: #e74c3c;
+    color: #ffffff;
+}
+
+/* --- BARRA DE NAVEGACIÓN FLOTANTE INFERIOR --- */
+#cambiar_pag {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    background-color: rgba(12, 8, 5, 0.8);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(230, 197, 148, 0.25);
+    padding: 8px 12px;
+    border-radius: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.75);
+    z-index: 999;
+    width: max-content;
+}
+
+#cambiar_pag .btn-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--color-cobre);
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(230, 197, 148, 0.15);
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+#cambiar_pag .btn-nav:hover {
+    background-color: #854f1d;
+    color: #ffffff;
+    border-color: #854f1d;
+    transform: translateY(-2px);
+}
+
+body#pag-gestion {
+    /* Dejar al menos 100px o 110px de padding abajo */
+    padding-bottom: 110px;
+}
+
+/* ==========================================================================
+   ESTILOS ESPECÍFICOS PARA EL MODAL DE EDICIÓN DE RECETAS
+   ========================================================================== */
+
+/* CONTENEDOR SUPERIOR (Híbrido Foto - Inputs) */
+
+.seccion-superior-modal {
+    display: grid;
+    grid-template-columns: 120px 1fr; /* Columna fija para foto, el resto para inputs */
+    gap: 16px;
+    align-items: flex-start;
+    width: 100%;
+}
+
+/* CAJA DE CARGA DE IMAGEN (Aptada para la columna izquierda) */
+.contenedor-upload-img {
+    width: 100%;
+    height: 145px; /* Altura ideal para acoplarse verticalmente con los inputs */
+}
+
+#dropzone-foto {
+    width: 100%;
+    height: 100%;
+    border: 1.5px dashed rgba(230, 197, 148, 0.35);
+    border-radius: 12px;
+    background-color: rgba(255, 255, 255, 0.02);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+#dropzone-foto:hover {
+    border-color: var(--color-oro);
+    background-color: rgba(230, 197, 148, 0.08);
+}
+
+#placeholder-foto {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--color-cobre);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+#preview-foto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* COLUMNA DERECHA (Contenedor de Inputs Fijos) */
+.columna-inputs-estaticos {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.grid-2-col-modal {
+    display: grid;
+    grid-template-columns: 85px 1fr; /* Precio compacto, Link expandido */
+    gap: 10px;
+}
+
+/* --- SECCIÓN INFERIOR (Lista de ingredientes) --- */
+.seccion-ingredientes-modal {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+    border-top: 1px dashed rgba(230, 197, 148, 0.2);
+    padding-top: 14px;
+}
+
+.titulo-seccion-lista {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--color-cobre);
+}
+
+#lista-ingredientes-receta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 180px; /* Límite para scroll si la receta lleva demasiados ingredientes */
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+/* FILA DINÁMICA DE INGREDIENTE */
+.fila-ingrediente-dinamico {
+    display: grid;
+    grid-template-columns: 1fr 80px 32px; /* Select toma espacio, input 80px, botón 32px */
+    gap: 8px;
+    align-items: center;
+}
+
+/* Darle formato elegante a los inputs y select dinámicos del modal */
+.fila-ingrediente-dinamico select,
+.fila-ingrediente-dinamico input {
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(230, 197, 148, 0.2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: #ffffff;
+    font-size: 0.85rem;
+    outline: none;
+}
+
+.fila-ingrediente-dinamico select option {
+    background-color: #160d08;
+    color: #ffffff;
+}
+
+.fila-ingrediente-dinamico select:focus,
+.fila-ingrediente-dinamico input:focus {
+    border-color: var(--color-oro);
+}
+
+/* BOTÓN ELIMINAR FILA (X) */
+.btn-eliminar-fila {
+    height: 34px;
+    width: 32px;
+    background-color: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.3);
+    color: #e74c3c;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.btn-eliminar-fila:hover {
+    background-color: #e74c3c;
+    color: #ffffff;
+}
+
+/* RESPONSIVIDAD: Si se abre desde un celular muy angosto se apila verticalmente */
+@media (max-width: 400px) {
+    .seccion-superior-modal {
+        grid-template-columns: 1fr;
+    }
+    .contenedor-upload-img {
+        height: 120px;
+    }
+    .grid-2-col-modal {
+        grid-template-columns: 1fr;
+    }
+}

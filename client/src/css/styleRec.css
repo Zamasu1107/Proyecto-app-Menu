@@ -486,3 +486,56 @@ article {
         height: 120px;
     }
 }
+
+/* --- BARRA DE NAVEGACIÓN FLOTANTE (BOTTOM NAV) --- */
+#cambiar_pag {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%); /* Lo centra exactamente en horizontal */
+    display: flex;
+    gap: 12px;
+    background-color: rgba(18, 14, 10, 0.85); /* Fondo oscuro coherente con el bar */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(133, 79, 29, 0.35); /* Borde tono licor */
+    padding: 8px 12px;
+    border-radius: 30px; /* Estilo cápsula/píldora */
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    z-index: 999; /* Se mantiene siempre sobre las tarjetas de la página */
+    width: max-content;
+}
+
+/* ESTILOS PARA CADA ENLACE/BOTÓN */
+#cambiar_pag .btn-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: #e6c594; /* Tono cálido/cobre refinado */
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(230, 197, 148, 0.15);
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.25s ease;
+}
+
+#cambiar_pag .btn-nav:hover {
+    background-color: #854f1d;
+    color: #ffffff;
+    border-color: #854f1d;
+    box-shadow: 0 0 12px rgba(133, 79, 29, 0.4);
+    transform: translateY(-2px);
+}
+
+#cambiar_pag .btn-nav:active {
+    transform: translateY(0);
+}
+
+#cambiar_pag .btn-nav.pagina-actual {
+    background-color: rgba(230, 197, 148, 0.18);
+    border-color: #f3d7a8;
+    color: #ffffff;
+}

@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import { MenuModel } from "../models/menuModels";
-import { Prisma } from "../generated/prisma/client";
+import { FamiliaMedida, Prisma } from "../generated/prisma/client";
 import { IngredientesRec, ValidarRec } from "../types/esquemas";
 
 export default class MenuController {
@@ -21,11 +21,28 @@ export default class MenuController {
 
     ingresarIng = async (req:Request<any, any, Prisma.IngredienteCreateInput>, res:Response) => {
         try {
-            const { nombre, tipo_insumo, cantidad_ml, cantidad_botellas, unidad_medida, precio, porcentaje_alcohol, marca, tipo_alcohol, activo = true } = req.body;
+            const { nombre, tipo_insumo, cantidad_total, cantidad_prod, unidad_medida,precio, porcentaje_alcohol, marca, tipo_alcohol, activo = true } = req.body;
 
+            const tipoFamilias: Record<string, FamiliaMedida> = {
+                destilados: 'VOLUMEN',
+                mezcladores: 'VOLUMEN',
+                licores: 'VOLUMEN',
+                frescos: 'PESO',
+                jarabe: 'VOLUMEN',
+                secos: 'PESO'
+            }
+
+            let familiaCalculada = tipoFamilias[tipo_insumo]!
+
+            if (tipo_insumo === 'frescos' && unidad_medida === 'pza') {
+                familiaCalculada = 'PIEZA'
+            }
+
+            const cantidadReal = 0 || Number(cantidad_total) * (cantidad_prod || 1);
+            
             const inputSeguro = {
-                nombre, tipo_insumo, cantidad_ml, cantidad_botellas: cantidad_botellas || null, unidad_medida, precio, 
-                porcentaje_alcohol:porcentaje_alcohol || null, marca:marca || null, tipo_alcohol: tipo_alcohol || null, activo
+                nombre, tipo_insumo, cantidad_total: cantidadReal, cantidad_prod: cantidad_prod || 1, unidad_medida, precio, 
+                porcentaje_alcohol:porcentaje_alcohol || null, marca:marca || null, tipo_alcohol: tipo_alcohol || null, activo, tipo_medida: familiaCalculada
             }
 
             const validarDatos = await this.menuModels.obtenerNombre(nombre)
@@ -51,12 +68,16 @@ export default class MenuController {
 
     updateIng = async (req:Request, res:Response) => {
         try {
-            const datos = req.body;
+            const {cantidad_total, cantidad_prod} = req.body;
+
+            const prodSuma = cantidad_prod * cantidad_total
+
+            const inputSeguro = { cantidad_prod: cantidad_prod, prodSuma }
 
             const {id} = req.params;
 
             if (typeof id === 'string') {
-                const nuevosDatos = await this.menuModels.editarProductoExistente({id, input: datos});
+                const nuevosDatos = await this.menuModels.editarProductoExistente({id, input: inputSeguro});
                 res.status(200).json(nuevosDatos); 
             }
            
@@ -99,7 +120,7 @@ export default class MenuController {
                 connect: { id: item.id }
             }
         })); 
-        const rutaImagen = req.file ? req.file.path : 'uploads/foto.png';
+        const rutaImagen = req.file?.filename || 'foto.png';
 
         try {
             const datosRec = await this.menuModels.guardarRec({
@@ -115,7 +136,11 @@ export default class MenuController {
 
             res.status(201).json(datosRec)
         } catch (error) {
-            res.status(500).json({error: 'Error al guardar el ingrediente'})
+            if (error instanceof Error) {
+                res.status(500).json({ error: error.message });
+            } else {
+                res.status(500).json({error: 'Error al guardar la receta'})
+            }
         }
     }
 
@@ -130,9 +155,11 @@ export default class MenuController {
             res.status(201).json(datos)  
         } catch (error) {
             if (error instanceof Error) {
-                return res.status(500).json({ error: error.message });
+                res.status(500).json({ error: error.message });
+            } else {
+                res.status(500).json({ error: "Error en el servidor" });
             }
-           return res.status(500).json({ error: "Error en el servidor" });
+           
         }
     }
 }

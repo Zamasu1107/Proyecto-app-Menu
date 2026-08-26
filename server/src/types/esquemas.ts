@@ -1,13 +1,13 @@
 export interface Ingredientes {
     nombre:string; 
     tipo_insumo:string;
-    cantidad_ml:number;
+    cantidad_total:number;
     unidad_medida:string; 
     precio:number;
     porcentaje_alcohol:number | null;
     marca: string | null; 
     tipo_alcohol:string | null;
-    cantidad_botellas: number | 1;
+    cantidad_prod: number | 1;
     activo:boolean;
 }
 
@@ -31,4 +31,9 @@ export interface MiPayload {
     id: string;
     username: string;
     rol: string;
+}
+
+export interface ActualizarDatos {
+    cantidad_prod: number,
+    prodSuma: number
 }

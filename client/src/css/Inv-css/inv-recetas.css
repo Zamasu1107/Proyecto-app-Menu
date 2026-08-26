@@ -1,0 +1,296 @@
+/* ==========================================================================
+   INV-RECETAS.CSS - Catálogo de Recetas y Subvistas de Cócteles
+   ========================================================================== */
+
+.grid-categorias-recetas {
+    display: grid;
+    /* En PC/Tablet son 4 columnas cómodas, en Celular 2 columnas amplias */
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px; /* Mayor separación */
+}
+
+/* TARJETA INDIVIDUAL AMPLIADA */
+.grid-categorias-recetas .card-categoria {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 16px; /* Mucho más padding interior */
+    min-height: 220px;   /* Altura fija cómoda para que todas queden parejas */
+    gap: 12px;
+    border: var(--borde-dorado);
+    background-color: var(--bg-card);
+    box-shadow: var(--sombra-card);
+    transition: all 0.25s ease;
+}
+
+.grid-categorias-recetas .card-categoria:hover {
+    border-color: var(--color-oro);
+    transform: translateY(-4px);
+    box-shadow: 0 14px 28px rgba(245, 207, 159, 0.25);
+}
+
+/* TÍTULO DE LA CATEGORÍA (CLÁSICOS, FUERTES, ETC.) */
+.grid-categorias-recetas .card-categoria h2 {
+    font-size: 1.2rem;       /* Tipografía grande */
+    font-weight: 700;
+    color: var(--color-oro);
+    letter-spacing: 1.2px;
+}
+
+/* SUBTÍTULO / DESCRIPCIÓN */
+.grid-categorias-recetas .card-categoria p {
+    font-size: 0.92rem;      /* Letra más grande y clara */
+    color: var(--color-muted);
+    font-weight: 500;
+    line-height: 1.3;
+}
+
+/* IMAGEN CIRCULAR DEL TRAGO */
+.grid-categorias-recetas .card-categoria img {
+    width: 80px;             /* Aumentado de 60px a 80px */
+    height: 80px;
+    border-radius: 50%;
+    margin-top: auto;        /* Siempre empuja la imagen abajo alineada */
+    border: 2px solid rgba(245, 207, 159, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    background-color: #f7e6d2; /* Fondo claro por si el PNG tiene transparencia */
+}
+
+/* ==========================================================================
+   TARJETA INDIVIDUAL DE RECETA EN INVENTARIO
+   ========================================================================== */
+
+.card-receta {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(12px);
+    border: var(--borde-dorado);
+    border-radius: 16px;
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 110px 1fr; /* Columna fija para foto + columna para datos */
+    gap: 16px;
+    align-items: center;
+    box-shadow: var(--sombra-card);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.card-receta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.7);
+}
+
+/* --- COLUMNA IZQUIERDA: IMAGEN --- */
+.card-imagen-receta {
+    position: relative;
+    width: 110px;
+    height: 110px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(230, 197, 148, 0.25);
+    flex-shrink: 0;
+}
+
+.card-imagen-receta img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+/* Badge de estado superpuesto a la imagen */
+.badge-estado-receta {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    right: 4px;
+    text-align: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 0;
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+}
+
+/* --- COLUMNA DERECHA: CONTENIDO --- */
+.cuerpo-card-receta {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0; /* Evita desbordamiento de texto */
+}
+
+.header-card-receta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.header-card-receta h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-oro);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* LISTA DE DATOS */
+.info-card-receta {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    border-top: 1px dashed rgba(230, 197, 148, 0.15);
+    padding-top: 6px;
+}
+
+.fila-dato {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.82rem;
+}
+
+.label-dato {
+    color: var(--color-muted);
+}
+
+.valor-dato {
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.precio-destacado {
+    color: var(--color-oro);
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+/* BOTÓN DE EDITAR (LÁPIZ) */
+.btn-editar-rec {
+    background-color: rgba(230, 197, 148, 0.1);
+    border: 1px solid rgba(230, 197, 148, 0.25);
+    color: var(--color-cobre);
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.btn-editar-rec:hover {
+    background-color: #854f1d;
+    color: #ffffff;
+    border-color: var(--color-oro);
+    transform: scale(1.08);
+}
+
+.btn-editar-rec svg {
+    pointer-events: none;
+}
+
+/* LINK DISCRETO A YOUTUBE */
+.link-youtube-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #e6c594;
+    text-decoration: none;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 2px;
+    transition: color 0.2s ease;
+}
+
+.link-youtube-mini svg {
+    fill: #ff4444;
+}
+
+.link-youtube-mini:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+/* ==========================================================================
+   ESTADOS DE DISPONIBILIDAD DE LA RECETA
+   ========================================================================== */
+
+/* RECETA DISPONIBLE */
+.card-receta.receta-disponible {
+    border-left: 5px solid #2ecc71;
+}
+
+.card-receta.receta-disponible .badge-estado-receta {
+    background-color: rgba(46, 204, 113, 0.85);
+    color: #ffffff;
+}
+
+.card-receta.receta-disponible .cantidad-dinamica .valor-dato {
+    color: #2ecc71;
+}
+
+/* RECETA AGOTADA (Falta algún ingrediente) */
+.card-receta.receta-agotada {
+    border-left: 5px solid #e74c3c;
+    opacity: 0.65; /* Atenuación visual para priorizar recetas activas */
+}
+
+.card-receta.receta-agotada:hover {
+    opacity: 0.95;
+}
+
+.card-receta.receta-agotada .badge-estado-receta {
+    background-color: rgba(231, 76, 60, 0.85);
+    color: #ffffff;
+}
+
+.card-receta.receta-agotada .cantidad-dinamica .valor-dato {
+    color: #ff6b6b;
+}
+
+/* RESPONSIVE EN MÓVILES MUY ANGOSTOS */
+@media (max-width: 380px) {
+    .card-receta {
+        grid-template-columns: 85px 1fr;
+        gap: 10px;
+    }
+
+    .card-imagen-receta {
+        width: 85px;
+        height: 85px;
+    }
+}
+
+/* RESPONSIVIDAD PARA CELULARES */
+@media (max-width: 650px) {
+    .grid-categorias-recetas {
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
+        gap: 14px;
+    }
+
+    .grid-categorias-recetas .card-categoria {
+        min-height: 200px;
+        padding: 18px 12px;
+    }
+
+    .grid-categorias-recetas .card-categoria h2 {
+        font-size: 1.05rem;
+    }
+
+    .grid-categorias-recetas .card-categoria p {
+        font-size: 0.82rem;
+    }
+
+    .grid-categorias-recetas .card-categoria img {
+        width: 70px;
+        height: 70px;
+    }
+}

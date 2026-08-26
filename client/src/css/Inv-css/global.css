@@ -1,0 +1,135 @@
+/* ==========================================================================
+   GLOBAL.CSS - Variables, Base, Layout y Tabs Globales
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Montserrat:wght@400;500;600;700&display=swap');
+
+:root {
+    /* Fondo estilo licor añejo / coñac con iluminación cálida central */
+    --bg-radial: radial-gradient(circle at 50% 15%, #4a2810 0%, #2b1406 45%, #120702 100%);
+    --bg-card: rgba(35, 18, 10, 0.85); /* Tarjetas con mayor contraste y cuerpo */
+    --bg-card-hover: rgba(55, 28, 14, 0.95);
+    
+    --color-oro: #ffe0a3;          /* Oro brillante de alta legibilidad */
+    --color-cobre: #f5cf9f;
+    --color-bronce: #d4a76a;
+    --color-texto: #ffffff;        /* Blanco nítido para máximo contraste */
+    --color-muted: #d9cbbe;        /* Subtítulos más claros para fácil lectura */
+    
+    --borde-dorado: 1.5px solid rgba(245, 207, 159, 0.35);
+    --borde-dorado-brillante: 1.5px solid rgba(255, 224, 163, 0.8);
+    
+    --radio-card: 20px;
+    --radio-input: 12px;
+    --sombra-card: 0 12px 30px rgba(0, 0, 0, 0.7);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', 'Segoe UI', sans-serif;
+}
+
+body#pag-gestion {
+    min-height: 100vh;
+    background: var(--bg-radial);
+    background-attachment: fixed;
+    color: var(--color-texto);
+    padding: 20px 16px 100px 16px; /* 100px abajo para no tapar la bottom-nav */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contenedor-app {
+    width: 100%;
+    max-width: 780px; /* De 520px a 780px para que las tarjetas sean más grandes */
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* --- SELECTOR DE PESTAÑAS PRINCIPALES (TABS) --- */
+.tabs-gestor {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.45);
+    padding: 4px;
+    border-radius: 14px;
+    border: var(--borde-dorado);
+    width: 100%;
+    max-width: 520px;
+    margin-bottom: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.tabs-gestor .tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--color-muted);
+    padding: 10px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tabs-gestor .tab-btn.activo {
+    background-color: #854f1d;
+    color: #ffffff;
+    box-shadow: 0 2px 10px rgba(133, 79, 29, 0.5);
+}
+
+/* --- TARJETA DE ENCABEZADO REUTILIZABLE --- */
+.card-encabezado {
+    background-color: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--borde-dorado);
+    border-radius: var(--radio-card);
+    padding: 18px 20px;
+    text-align: center;
+    box-shadow: var(--sombra-card);
+    margin-bottom: 20px;
+}
+
+.card-encabezado h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-oro);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* --- BOTÓN DE REGRESAR SUBVISTAS --- */
+.btn-regresar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: var(--borde-dorado);
+    color: var(--color-cobre);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.25s ease;
+}
+
+.btn-regresar:hover {
+    background-color: rgba(230, 197, 148, 0.15);
+    color: #ffffff;
+    border-color: var(--color-oro);
+}
+
+/* --- CLASE UNIVERSAL DE OCULTAMIENTO --- */
+.oculto {
+    display: none !important;
+}

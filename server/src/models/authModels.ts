@@ -3,7 +3,7 @@ import prisma from "../db/prisma/prismaDB";
 export default class AuthModel {
     static async obtenerUsername (username:string) {
         try {
-            const buscarUser = prisma.usuario.findUnique({where: {username: username}})
+            const buscarUser = await prisma.usuario.findUnique({where: {username: username}})
 
             return buscarUser
         } catch (error) {
@@ -12,7 +12,14 @@ export default class AuthModel {
         }
     }
 
-    static async registrarUser (_username:string, _password:string) {
+    static async registrarUser (username:string, password:string) {
+        try {
+            const crearUser = await prisma.usuario.create({ data: {username, password}, select: { id: true, username: true}})
 
+            return crearUser;
+        } catch (error) {
+           console.log(error)
+           throw new Error('No se pudo crear el usuario') 
+        }
     }
 }

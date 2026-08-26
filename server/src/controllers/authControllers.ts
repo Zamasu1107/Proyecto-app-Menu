@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { ValidarUsers, authUser } from "../schemas/auth.schema";
+import { ValidarUsers, authUser, ValidarNewUsers, authNewUser } from "../schemas/auth.schema";
 import { ZodError } from "zod";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -13,19 +13,19 @@ export default class AuthController {
     authRegister =  async(req:Request, res:Response) => {
         try {
             const newUser = req.body
-            const valUser: ValidarUsers = authUser.parse(newUser)
+            const valUser: ValidarNewUsers = authNewUser.parse(newUser)
 
-            const {username, password} = valUser
+            const {new_username, new_password} = valUser
 
-            const valUsername = await this.authModels.obtenerUsername(username)
+            const valUsername = await this.authModels.obtenerUsername(new_username)
 
             if (valUsername) {
                 return res.status(409).json({error: "Error el usuario ya existe"})
             }
 
-            const hashedPassword = await bcrypt.hash(password, 10);
+            const hashedPassword = await bcrypt.hash(new_password, 10);
 
-            await this.authModels.registrarUser(username, hashedPassword)
+            await this.authModels.registrarUser(new_username, hashedPassword)
 
             res.status(201).json({ message: "Usuario creado exitosamente" })
         } catch (error) {
@@ -42,7 +42,7 @@ export default class AuthController {
             const user = req.body
             const valUser: ValidarUsers = authUser.parse(user)
 
-            const {username, password, rol} = valUser
+            const {username, password} = valUser
 
             const valUsername = await this.authModels.obtenerUsername(username)
             if (!valUsername) {
@@ -54,10 +54,10 @@ export default class AuthController {
                 return res.status(401).json({error: "El usuario o la contraseña son incorrectos"})
             }
 
-            const token = jwt.sign({id: valUsername.id, username, rol}, "SECRET_KEY", { expiresIn: '1h'})
+            const token = jwt.sign({id: valUsername.id, username, rol: valUsername.rol}, "SECRET_KEY", { expiresIn: '1h'})
 
-            res.cookie("access_token", token, { httpOnly: true, secure: true })
-            res.status(201).json({ message: "Usuario logeado exitosamente" })  
+            res.cookie('access_token', token, { httpOnly: true, secure: true })
+            res.status(200).json({ message: "Usuario logeado exitosamente" })  
         } catch (error) {
             if (error instanceof ZodError) {
                 return res.status(400).json({Error: error.issues});

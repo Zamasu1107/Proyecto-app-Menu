@@ -55,10 +55,14 @@
                         <label for="categoria">Categoría</label>
                         <select name="categoria" id="tipo-receta" required>
                             <option value="" selected disabled>Selecciona una opción</option>
-                            <option value="Mixologia">Mixología</option>
-                            <option value="Clasicos">Clásicos</option>
+                            <option value="Clásicos">Clásicos</option>
+                            <option value="Tropicales">Tropicales</option>
+                            <option value="Fuertes">Fuertes</option>
+                            <option value="Café">Café</option>
+                            <option value="Autor">Autor</option>
+                            <option value="MockTails">MockTails</option>
+                            <option value="HighBalls">HighBalls</option>
                             <option value="Shots">Shots</option>
-                            <option value="Cafe">Café</option>
                         </select>
                     </div>
 
@@ -96,6 +100,26 @@
                 </table>
             </div>
         </article>
+
+        <nav id="cambiar_pag">
+            <a href="indexInv.html" class="btn-nav">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+                    <path d="m3.3 7 8.7 5 8.7-5"></path>
+                    <path d="M12 22V12"></path>
+                </svg>
+                <span>Ir al Inventario</span>
+            </a>
+            
+            <a href="indexMenu.html" class="btn-nav">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 22h8"></path>
+                    <path d="M12 11v11"></path>
+                    <path d="m19 3-7 8-7-8Z"></path>
+                </svg>
+                <span>Ir al Menú</span>
+            </a>
+        </nav>
     </main>
     <script src="src/pages/recetaNueva.ts" type="module"></script>
 </body>

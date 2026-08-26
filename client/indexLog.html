@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="src/css/styleLog.css">
+    <title>Inicio Auth</title>
+</head>
+<body id="pag-auth">
+    <main class="contenedor-auth">
+        <header id="titulo-auth">
+            <div class="badge-admin">Módulo Administrativo</div>
+            <h1>Menú Gestión</h1>
+            <p>Ingrese sus datos para acceder al sistema</p>
+        </header>
+
+        <article class="card-auth">
+            <div class="tabs-auth">
+                <button type="button" class="tab-btn activo" id="tab-login" onclick="cambiarTab('login')">Iniciar Sesión</button>
+                <button type="button" class="tab-btn" id="tab-register" onclick="cambiarTab('register')">Registrarse</button>
+            </div>
+
+            <div id="log_field" class="campo-form">
+                <form action="POST" id="log_form" class="form-auth">
+                    <div class="grupo-input">
+                        <label for="username">Usuario</label>
+                        <input type="text" id="username" name="username" autocomplete="username" placeholder="Ingrese su usuario" required>
+                        <p class="error-message oculto" id="error-username" aria-live="polite"></p>   
+                    </div>
+                    <div class="grupo-input">
+                        <label for="password">Contraseña</label>
+                        <div class="input-password-wrapper">
+                            <input type="password" id="password" name="password" placeholder="Ingrese su contraseña" required>
+                            <button type="button" class="btn-eye" onclick="togglePassword('password', this)" title="Mostrar/Ocultar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                        <p class="error-message oculto" id="error-password" aria-live="polite"></p>
+                    </div>
+
+                    <button type="submit" id="login_btn" class="btn-submit-auth">Acceder al Sistema</button>
+                </form>
+            </div>
+            <div id="register_field" class="campo-form oculto">
+                <form action="POST" id="register_form" class="form-auth">
+                    <div class="grupo-input">
+                        <label for="new_username">Nuevo Usuario</label>
+                        <input type="text" id="new_username" name="new_username" placeholder="Cree su nombre de usuario" required>
+                        <p class="oculto" id="user-error" aria-live="polite"></p>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="new_password">Contraseña</label>
+                        <div class="input-password-wrapper">
+                            <input type="password" id="new_password" name="new_password" placeholder="Cree una contraseña" required>
+                            <button type="button" class="btn-eye" onclick="togglePassword('new_password', this)" title="Mostrar/Ocultar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                        <p class="password-error oculto" id="newpass-error" aria-live="polite"></p>
+                    </div>
+
+                    <div class="grupo-input">
+                        <label for="confirm_password">Confirmar Contraseña</label>
+                        <div class="input-password-wrapper">
+                            <input type="password" id="confirm_password" name="confirm_password" placeholder="Repita la contraseña" required>
+                            <button type="button" class="btn-eye" onclick="togglePassword('confirm_password', this)" title="Mostrar/Ocultar">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                            </button>
+                        </div>
+                        <p class="password-error oculto" id="newconfirm-error" aria-live="polite"></p>
+                    </div>
+
+                    <button type="submit" id="register_btn" class="btn-submit-auth">Crear Cuenta Admin</button>
+                </form>
+            </div>
+        </article>
+    </main>
+    <script src="src/pages/inicio-registro.ts"></script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+/* --- RESETEO BASE --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- FONDO DISTINTIVO MÓDULO AUTH --- */
+#pag-auth {
+    min-height: 100vh;
+    /* Degradado profundo con resplandor cálido ámbar/cobre centrado */
+    background: radial-gradient(circle at center, #23140b 0%, #110905 50%, #050201 100%);
+    background-attachment: fixed;
+    color: #f2e9e1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.contenedor-auth {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* --- CABECERA --- */
+#titulo-auth {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.badge-admin {
+    background-color: rgba(230, 197, 148, 0.1);
+    border: 1px solid rgba(230, 197, 148, 0.3);
+    color: #e6c594;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
+}
+
+#titulo-auth h1 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+#titulo-auth p {
+    font-size: 0.88rem;
+    color: #a0958d;
+}
+
+/* --- TARJETA DE AUTENTICACIÓN --- */
+.card-auth {
+    background-color: rgba(20, 11, 7, 0.75);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(230, 197, 148, 0.2);
+    border-radius: 20px;
+    padding: 28px 24px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
+}
+
+/* --- PESTAÑAS (TABS) --- */
+.tabs-auth {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #a0958d;
+    padding: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.tab-btn.activo {
+    background-color: #854f1d;
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(133, 79, 29, 0.4);
+}
+
+/* --- FORMULARIO Y CAMPOS --- */
+.form-auth {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.grupo-input {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.grupo-input label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #e6c594;
+}
+
+.grupo-input input[type="text"],
+.grupo-input input[type="password"] {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(230, 197, 148, 0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+}
+
+.grupo-input input:focus {
+    outline: none;
+    border-color: #e6c594;
+    background-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 10px rgba(230, 197, 148, 0.2);
+}
+
+/* --- CONTENEDOR DE CONTRASEÑA E ICONO OJO --- */
+.input-password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-password-wrapper input {
+    padding-right: 42px; /* Espacio para que el texto no se encime con el icono */
+}
+
+.btn-eye {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    transition: color 0.2s ease;
+}
+
+.btn-eye:hover {
+    color: #e6c594;
+}
+
+/* --- BOTONES SUBMIT --- */
+.btn-submit-auth {
+    margin-top: 10px;
+    background: linear-gradient(135deg, #a86b32 0%, #78471d 100%);
+    border: none;
+    color: #ffffff;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(120, 71, 29, 0.4);
+    transition: all 0.25s ease;
+}
+
+.btn-submit-auth:hover {
+    background: linear-gradient(135deg, #b87a3e 0%, #8a5323 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(120, 71, 29, 0.6);
+}
+
+.btn-submit-auth:active {
+    transform: translateY(1px);
+}
+
+/* --- CLASE AUXILIAR OCULTO --- */
+.oculto {
+    display: none !important;
+}
+
+.error-message {
+    color: #ff5252; /* Rojo vibrante con gran contraste sobre fondo oscuro */
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Opcional: Agregar un pequeño punto o icono rojo de advertencia vía CSS */
+.error-message::before {
+    content: "•";
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* Clase dinámica para marcar la caja del input en rojo cuando hay un error */
+.input-error {
+    border-color: #ff5252 !important;
+    background-color: rgba(255, 82, 82, 0.08) !important;
+    box-shadow: 0 0 8px rgba(255, 82, 82, 0.25) !important;
+}
+
+.password-error {
+    color: #ff5252; /* Rojo vibrante con gran contraste sobre fondo oscuro */
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Opcional: Agregar un pequeño punto o icono rojo de advertencia vía CSS */
+.password-error::before {
+    content: "•";
+    font-size: 1rem;
+    line-height: 1;
+}
+
+#user-error {
+    color: #ff5252; /* Rojo vibrante con gran contraste sobre fondo oscuro */
+    font-size: 0.78rem;
+    font-weight: 600;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Opcional: Agregar un pequeño punto o icono rojo de advertencia vía CSS */
+#user-error::before {
+    content: "•";
+    font-size: 1rem;
+    line-height: 1;
+}

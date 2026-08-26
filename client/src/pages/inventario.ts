@@ -1,246 +1,277 @@
 import { obtenerIngredientes } from "../services/ingredientesService";
-import type { DatosForm, EditForm, Ingrediente } from "../types/interfaces";
+import { obtenerRecetas } from "../services/recetasServices";
+import { contendorBtnTab, contenedorRec, contendorIng, btnIngVisual, btnRecVisual, categoriaFormIng, formAñadirIng, modalFormIng, modalFormRec, vistaGeneralIng, vistaInsumos, vistaGeneralRec, vistaRecetas, seccionCatIng, contenedorInsumos, seccionCatRec, contenedorRecetas, btnRegresarIng, btnRegresarRec, modal, contenedorModalGlobal, formEditarIng, formEditarRec, contenedorIngRec} from '../utils/domContent'
+import { actualizarPagina, modalFiltro, alternarVistas } from "../utils/vistas-filtros";
+import configCategorias from "../utils/configCategorias";
+import renderizarCards from "../utils/renderizarCards";
+import type { DatosForm, EditForm, Ingrediente, RecetaIngPrisma } from "../types/interfaces";
 
-let datosGlobales:Ingrediente[] = []
+let datosIngGlobales:Ingrediente[] = []
+let datosRecGlobales:RecetaIngPrisma[] = []
 
 document.addEventListener('DOMContentLoaded', async () => {
-    datosGlobales = await obtenerIngredientes();
-    console.log("Inventario cargado en memoria listo para buscar:", datosGlobales);
+    datosIngGlobales = await obtenerIngredientes();
+    datosRecGlobales = await obtenerRecetas();
 });
 
-const tipos = document.getElementById('tipo-producto') as HTMLSelectElement;
-const contenedorDestilados = document.getElementById('seccion-destilados') as HTMLDivElement;
-const contenedorMezcladores = document.getElementById('seccion-mezcladores') as HTMLDivElement;
-const contenedorLicores = document.getElementById('seccion-licores') as HTMLDivElement;
-const contenedorFrescos = document.getElementById('seccion-fresco') as HTMLDivElement;
-const contenedorJarabes = document.getElementById('seccion-jarabe') as HTMLDivElement;
-const contenedorSecos = document.getElementById('seccion-secos') as HTMLDivElement;
-const inputPorcentaje = document.getElementById('porcentaje-dest') as HTMLInputElement;
-const form = document.getElementById('ingresar-producto') as HTMLFormElement;
-const editForm = document.getElementById('editar-producto') as HTMLFormElement;
-const articulo = document.querySelectorAll('.card');
-const vistaIngredientes = document.getElementById('vista-detalle') as HTMLDivElement;
-const vistaInsumo = document.getElementById('vista-menu') as HTMLDivElement;
-const boton = document.getElementById('btn-regresar') as HTMLButtonElement;
-const botonEliminar = document.getElementById('btn-eliminar') as HTMLButtonElement;
-
-
-tipos.addEventListener('change', (event:Event) => {
-  contenedorDestilados.classList.add('oculto');
-  contenedorMezcladores.classList.add('oculto');
-  contenedorLicores.classList.add('oculto');
-  contenedorFrescos.classList.add('oculto');
-  contenedorJarabes.classList.add('oculto');
-  contenedorSecos.classList.add('oculto');
-  inputPorcentaje.disabled = true
-  
-  const values = event.target as HTMLSelectElement
-
-  switch (values.value) {
-    case 'destilados':
-      contenedorDestilados.classList.remove('oculto')
-      inputPorcentaje.disabled = false
-      break;
-
-    case 'mezcladores':
-      contenedorMezcladores.classList.remove('oculto')
-      break;
-
-    case 'licores':
-      contenedorLicores.classList.remove('oculto')
-      break;
-
-    case 'frescos':
-      contenedorFrescos.classList.remove('oculto')
-      break;
-
-    case 'jarabe':
-      contenedorJarabes.classList.remove('oculto')
-      break;
-
-    case 'secos':
-      contenedorSecos.classList.remove('oculto')
-      break;
+// Logica General ------>
+contendorBtnTab.addEventListener('click', (e:Event) => {
+  const btnIng = (e.target as HTMLElement).closest('#tab-ing')
+  const btnRec = (e.target as HTMLElement).closest('#tab-rec')
+  if (btnIng as HTMLButtonElement) {
+    contenedorRec.classList.add('oculto')
+    contendorIng.classList.remove('oculto')
+    btnIngVisual.classList.add('activo')
+    btnRecVisual?.classList.remove('activo')
   }
+  if (btnRec as HTMLButtonElement) {
+    contendorIng.classList.add('oculto')
+    contenedorRec.classList.remove('oculto')
+    btnRecVisual?.classList.add('activo')
+    btnIngVisual?.classList.remove('activo')
+  }
+
 })
 
-form.addEventListener('submit', async (Event:Event) => {
-  Event.preventDefault();
+categoriaFormIng.addEventListener('change', (e:Event) => {
+  const values = e.target as HTMLSelectElement
+
+  const todasCategorias = Object.values(configCategorias)
+  todasCategorias.forEach((cat) => {cat.contendor?.classList.add('oculto'), cat.inputUnidad.value = 'g';})
+  const categoriaActual = configCategorias[values.value as keyof typeof configCategorias]
+
+  categoriaActual.contendor?.classList.remove('oculto');
+  categoriaActual.inputUnidad.value = categoriaActual.unidadBase
   
-  const formIng = new FormData(form);
+})
+
+formAñadirIng.addEventListener('submit', async (e:Event) => {
+  e.preventDefault();
+  
+  const formIng = new FormData(formAñadirIng);
   const datosNuevos:DatosForm = {
-    nombre: formIng.get('nombre') as string,
-    cantidad_ml: Number(formIng.get('cantidad')),
-    unidad_medida: formIng.get('medida') as string,
+    nombre: formIng.get('nombre')?.toString() || '',
+    cantidad_total: Number(formIng.get('capacidad_envase')),
+    unidad_medida: formIng.get('tipo-unid') as string,
     precio: Number(formIng.get('precio')),
     porcentaje_alcohol: Number(formIng.get('porcentaje')),
     marca: formIng.get('marca') as string,
     tipo_alcohol: formIng.get('tipo-alcohol') as string,
     tipo_insumo: formIng.get('tipo-prod') as string,
-    cantidad_botellas: Number(formIng.get('cantidad-botellas'))
+    cantidad_prod: Number(formIng.get('cantidad-prod'))
   }
 
-  if (tipos.value !== 'destilados') {
+  if (categoriaFormIng.value !== 'destilados') {
     datosNuevos.tipo_alcohol = null;
-  } if (tipos.value !== 'destilados' && tipos.value !== 'licores') {
+  } 
+  if (categoriaFormIng.value !== 'destilados' && categoriaFormIng.value !== 'licores') {
     datosNuevos.porcentaje_alcohol = null;
   }
   try {
-    await fetch('http://localhost:1001/api/ingredientes', {
+    const respuesta = await fetch('http://localhost:1001/api/ingredientes', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(datosNuevos)
     })
-
-    form.reset();
-    datosGlobales = await obtenerIngredientes();
+    if (respuesta.ok) {
+      formAñadirIng.reset();
+      datosIngGlobales = await obtenerIngredientes();
+    } else {
+      const error = await respuesta.json()
+      console.log(error);
+    }
   } catch (error) {
     console.error("Error al enviar los datos al Servidor:", error);
   } 
 })
 
-function renderizarCards(ingredientesFiltrados:Ingrediente[]) {
+seccionCatIng.addEventListener('click', (e:Event) => {
+  const categoriaSelectIng = (e.target as HTMLElement).closest('.card-categoria')
+  const tipo = 'ingrediente';
+  if (!categoriaSelectIng) return
+  const categoriaId = (categoriaSelectIng as HTMLElement).dataset.categoria!
 
-  const contendor = document.getElementById('contenedor-cards-prod');
-    let htmlCard = '';
-    
-    ingredientesFiltrados.forEach((ingrediente: Ingrediente) => {
-      let estadoIngrediente = null;
-      let mensajeEstado = null;
+  actualizarPagina(vistaGeneralIng, vistaInsumos, datosIngGlobales, 'tipo_insumo', categoriaId , contenedorInsumos, tipo)
+})
 
-      if(ingrediente.cantidad_ml > 0 && ingrediente.cantidad_ml <= 250) {
-        estadoIngrediente = 'dispo-media'
-        mensajeEstado = 'Media'
-      }else if (ingrediente.cantidad_ml === 0) {
-        estadoIngrediente = 'dispo-baja'
-        mensajeEstado = 'Agotada'
-      } else {
-        estadoIngrediente = 'dispo-alta'
-        mensajeEstado = 'Alta'
+contenedorInsumos.addEventListener('click', (e:Event) => {
+  const modalSelectIng = (e.target as HTMLElement).closest('.btn-editar-prod')
+  const tipo = 'ingrediente';
+  if (!modalSelectIng) return
+    const modalId = (modalSelectIng as HTMLElement).dataset.id!
+    const productoEncontrado = modalFiltro(modalId, datosIngGlobales, tipo)
+    if (productoEncontrado) {
+      (document.getElementById('edit-id-modal') as HTMLInputElement).value = productoEncontrado.id;
+      (document.getElementById('titulo-prod-modal') as HTMLElement).textContent = `Editar Producto: ${productoEncontrado.nombre}`;
+      alternarVistas(null, modal)
+    }
+})
+
+seccionCatRec.addEventListener('click', (e:Event) => {
+  const categoriaSelectRec = (e.target as HTMLElement).closest('.card-categoria')
+  const tipo = 'receta';
+  if (!categoriaSelectRec) return
+  const categoriaId = (categoriaSelectRec as HTMLElement).dataset.categoriaRec!
+
+  actualizarPagina(vistaGeneralRec, vistaRecetas, datosRecGlobales, 'categoria', categoriaId , contenedorRecetas, tipo)
+})
+
+contenedorRecetas.addEventListener('click', (e:Event) => {
+  const modalSelectRec = (e.target as HTMLElement).closest('.btn-editar-rec')
+  const tipo = 'receta';
+  if (!modalSelectRec) return
+    const modalId = (modalSelectRec as HTMLElement).dataset.id!
+    const productoEncontrado = modalFiltro(modalId, datosRecGlobales, tipo)
+    if (productoEncontrado && contenedorIngRec) {
+      (document.getElementById('edit-id-modal-rec') as HTMLInputElement).value = productoEncontrado.id;
+      (document.getElementById('titulo-rec-modal') as HTMLElement).textContent = `Editar Producto: ${productoEncontrado.nombre}`;
+
+      // Recorremos los ingredientes actuales de la receta
+      contenedorIngRec.innerHTML = (productoEncontrado as RecetaIngPrisma).recetas_ingredientes.map((ingReq) => {
+        return `
+        <label class="titulo-seccion-lista">Ingredientes Necesarios</label>
+          
+          <div id="lista-ingredientes-receta">
+            <div class="fila-ingrediente-dinamico">
+              <select class="select-id-ingrediente">
+                ${datosIngGlobales.map((ingGlobal) => `
+                  <option value="${ingGlobal.id}" ${ingGlobal.id === ingReq.id_ingrediente ? 'selected' : ''}>
+                    ${ingGlobal.nombre}
+                  </option>
+                `).join('')}
+              </select>
+
+              <input type="number" class="input-cantidad-ingrediente" value="${ingReq.cantidad_necesaria}" placeholder="Cant.">
+              
+              <button type="button" class="btn-eliminar-fila" title="Eliminar ingrediente">&times;</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      alternarVistas(null, modal)
+    }
+})
+
+btnRegresarIng.addEventListener('click', () => {
+  alternarVistas(vistaInsumos, vistaGeneralIng)
+})
+
+btnRegresarRec.addEventListener('click', () => {
+  alternarVistas(vistaRecetas, vistaGeneralRec)
+})
+
+contenedorModalGlobal.addEventListener('click', async (e:Event) => {
+  const btnCerrarModal = (e.target as HTMLElement).closest('.btn-cerrar-modal')
+  const btnEliminarLocal = (e.target as HTMLElement).closest('.btn-eliminar-modal')
+
+  if (btnCerrarModal) {
+  modalFormIng?.classList.add('oculto')
+  modalFormRec?.classList.add('oculto')
+  
+  alternarVistas(modal, null)
+  } else if (btnEliminarLocal) {
+    const btnId = (btnEliminarLocal as HTMLButtonElement).dataset.id
+    const btnTipo = (btnEliminarLocal as HTMLButtonElement).dataset.tipo
+    const btnCategoria = (btnEliminarLocal as HTMLButtonElement).dataset.categoria
+    const confirmacion = window.confirm('¿Estás seguro de que deseas eliminar este elemento?');
+    if (confirmacion) {
+      try {
+      const respuesta = await fetch(`http://localhost:1001/api/${btnTipo}s/${btnId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+        headers: {
+                  'Content-Type': 'application/json'
+                },
+              })
+              if (respuesta.ok) {
+                if (btnTipo === 'ingrediente') {
+                  datosIngGlobales = datosIngGlobales.filter((ing) => ing.id !== btnId)
+                  const insumosFiltrados = datosIngGlobales.filter((ing) => ing.tipo_insumo === btnCategoria)
+                  alternarVistas(modal, null)
+                  renderizarCards(insumosFiltrados, contenedorInsumos, 'ingrediente')
+                } else if(btnTipo === 'receta') {
+                  datosRecGlobales = datosRecGlobales.filter((rec) => rec.id !== btnId)
+                  const insumosFiltrados = datosRecGlobales.filter((rec) => rec.categoria === btnCategoria)
+                  alternarVistas(modal, null)
+                  renderizarCards(insumosFiltrados, contenedorRecetas, 'receta')
+                }
+              } 
+      } catch(error) {
+        console.log('No se pudo mandar el ingrediente', error);
       }
+    }
+  }
+})
 
-        htmlCard += `<article class="card-prod ${estadoIngrediente}">
-                    <div class="header-card-producto">
-                      <h2>${ingrediente.nombre}</h2>
-                      <button type="button" data-id="${ingrediente.id}" class="btn-editar-prod">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
-                      </button>
-                    </div>
-                    <div class="info-card-producto">
-                      <p>Cantidad Disponible: <span>${ingrediente.cantidad_ml} ${ingrediente.unidad_medida}</span></p>
-                      <p>Cantidad en Recetas: <span>0</span></p>
-                      <p class="disponibilidad">Disponibilidad: <span>${mensajeEstado}</span></p>
-                    </div>
-                  </article>
-                  `      
-      });
+formEditarIng.addEventListener('submit', async(e:Event) => {
+  e.preventDefault();
+  const idForm = (e.target as HTMLElement).closest('#edit-id-modal')
+  const idProducto = (idForm as HTMLInputElement).value
+  const formModal = new FormData(formEditarIng)
+  const editDatos:EditForm = {
+    cantidad_total: Number(formModal.get('cantidad_total')),
+    cantidad_prod: Number(formModal.get('cantidad_botellas'))
+  }
 
-    if (contendor) {
-      contendor.innerHTML = htmlCard;
-
-      const botonModal = document.querySelectorAll('.btn-editar-prod');
-      const botonCerrarModal = document.querySelectorAll('.btn-cerrar-modal');
-      botonModal.forEach((botones) => {
-        botones.addEventListener('click', (Event:Event) => {
-          const idDelProducto = (Event.currentTarget as HTMLButtonElement).dataset.id;
-
-        if (idDelProducto) {
-            // Buscamos el producto correspondiente en tu array global de datos
-            const productoEncontrado = datosGlobales.find((p:Ingrediente) => p.id === idDelProducto);
-
-            if (productoEncontrado) {
-                // Inyectamos sus datos en el ÚNICO modal
-                (document.getElementById('edit-id-modal') as HTMLInputElement).value = productoEncontrado.id;
-                (document.getElementById('titulo-prod-modal') as HTMLElement).textContent = productoEncontrado.nombre;
-
-                // Mostramos el modal quitando la clase oculto
-                document.getElementById('modal-editar-prod')?.classList.remove('oculto');
-            }
-        }
-
-        editForm.addEventListener('submit', async(Event:Event) => {
-          Event.preventDefault();
-          const formModal = new FormData(editForm)
-          const editDatos:EditForm = {
-            precio: Number(formModal.get('precio')),
-            cantidad_botellas: Number(formModal.get('cantidad_botellas'))
-          }
-
-          try {
-            await fetch(`http://localhost:1001/api/ingredientes/${idDelProducto}`, {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify(editDatos)
-            })
-
-            editForm.reset();
-            datosGlobales = await obtenerIngredientes();
-            document.getElementById('modal-editar-prod')?.classList.add('oculto');
-          } catch (error) {
-            console.error("Error al enviar los datos al Servidor:", error);
-          }
-
-        })
-      });
+  try {
+    const respuesta = await fetch(`http://localhost:1001/api/ingredientes/${idProducto}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(editDatos)
     })
 
-      botonCerrarModal.forEach((botones) => {
-          botones.addEventListener('click', (_Event:Event) => {
-            document.getElementById('modal-editar-prod')?.classList.add('oculto');
-        })
+    if (respuesta.ok) {
+      datosIngGlobales = datosIngGlobales.map((ing) => {
+        if (ing.id === idProducto) {
+          return { ...ing, ...editDatos}
+        } else {
+          return ing
+        }
       })
+      renderizarCards(datosIngGlobales, contenedorInsumos, 'ingrediente')
+      formEditarIng.reset();
+      alternarVistas(modal, null) 
     }
-}
-
-function actualizarPagina(event:Event) {
-
-  vistaIngredientes.classList.remove('oculto')
-  vistaInsumo.classList.add('oculto')
-  window.scrollTo({ top: 0, behavior: 'instant' });
-
-  const target = event.currentTarget as HTMLElement;
-  let idArticulo = target.id;
-  const ingredientesFiltrados = datosGlobales.filter((ingrediente:Ingrediente) => ingrediente.tipo_insumo.toLowerCase() === idArticulo);
-
-  renderizarCards(ingredientesFiltrados);
-}
-
-articulo.forEach((articulo) => {
-  articulo.addEventListener('click', actualizarPagina)
-})
-
-boton.addEventListener('click', (_Event:Event) => {
-  vistaIngredientes.classList.add('oculto')
-  vistaInsumo.classList.remove('oculto')
-  window.scrollTo({ top: 0, behavior: 'instant' });
-})
-
-botonEliminar.addEventListener('click', async (_Event:Event) => {
-  const idProducto = (document.getElementById('edit-id-modal') as HTMLInputElement).value;
-  const confirmacion = window.confirm('¿Estás seguro de que deseas eliminar este producto?');
-  if (confirmacion) {
-    try {
-    await fetch(`http://localhost:1001/api/ingredientes/${idProducto}`, {
-      method: 'DELETE',
-      headers: {
-                'Content-Type': 'application/json'
-              },
-            })
-            document.getElementById('modal-editar-prod')?.classList.add('oculto');
-            let datos = datosGlobales.filter((ingrediente:Ingrediente) => ingrediente.id !== idProducto);
-            datosGlobales = datos
-
-            // 4. Volvemos a dibujar las tarjetas en el HTML usando la lista limpia
-            renderizarCards(datosGlobales);
   } catch (error) {
     console.error("Error al enviar los datos al Servidor:", error);
   }
-  }
-  
 })
 
+formEditarRec.addEventListener('submit', async(e:Event) => {
+  e.preventDefault()
+  const filas = document.querySelectorAll('.fila-ingrediente-dinamico');
 
+  const formDatos = new FormData(formEditarRec);
+
+  const datosLimpios = Array.from(filas).map((ingNuevo) => {
+    return {id_ingrediente: ingNuevo.querySelector('select')?.value, cantidad_necesaria: Number(ingNuevo.querySelector('input')?.value)}
+  })
+
+  formDatos.append('recetas_ingredientes', JSON.stringify(datosLimpios));
+
+  try {
+    const respuesta = await fetch('http://localhost:1001/api/recetas', {
+      method: 'POST',
+          credentials: 'include',
+          headers: {
+          },
+          body: formDatos
+    })
+    if (respuesta.ok) {
+            renderizarCards(datosIngGlobales, contenedorRecetas, 'receta')
+            formEditarRec.reset();
+            alternarVistas(modal, null) 
+        } else {
+            const error = await respuesta.json()
+            console.log(error);
+        }
+      } catch (error) {
+        console.error("Error al enviar los datos al Servidor:", error);
+      }
+});

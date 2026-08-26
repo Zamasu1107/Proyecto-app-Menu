@@ -1,209 +1,429 @@
 <!doctype html>
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="stylesheet" href="src/css/style.css">
-    <link rel="stylesheet" href="src/css/styleInv.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Menu Inventario</title>
-  </head>
-  <body id="pag-inventario">
-    <a href="indexRec.html"><button>Crear Receta</button></a>
+    <title>Gestión de Inventarios | Cantina</title>
     
-    <div id="vista-menu" class="vista-pagina">
-      <header class="card" id="card-titulo">
-        <h1>Inventario Principal</h1>
-      </header>
+    <!-- CSS Modular: Base global, Ingredientes, Recetas y Modales/Nav -->
+    <link rel="stylesheet" href="src/css/Inv-css/global.css">
+    <link rel="stylesheet" href="src/css/Inv-css/inv-ingredientes.css">
+    <link rel="stylesheet" href="src/css/Inv-css/inv-recetas.css">
+    <link rel="stylesheet" href="src/css/Inv-css/modales-nav.css">
+  </head>
+  <body id="pag-gestion">
 
-      <main>
-
-        <section class="cards-insumo">
-
-          <article class="card" id="destilados">
-          <div>
-            <h2>Destilados Base</h2>
-            <p>Tipos de alcoholes</p>
-          </div>
-          <img src="/src/assets/images.jpg" alt="Imagen de Alcohol">
-          </article>
-
-          <article class="card" id="licores">
-          <div>
-            <h2>Licores y modificadores</h2>
-            <p>Tipos de alcoholes secundarios y endulzantes</p>
-          </div>
-          <img src="/src/assets/images.jpg" alt="Imagen de licores">
-          </article>
-
-          <article class="card" id="mezcladores">
-          <div>
-            <h2>Mezcladores</h2>
-            <p>Tipos de bebidas no alcoholicas</p>
-          </div>
-          <img src="/src/assets/images.jpg" alt="Imagen de mezcladores o refrescos">
-          </article>
-
-          <article class="card" id="frescos">
-          <div>
-            <h2>Frescos</h2>
-            <p>Tipos frutas y verduras</p>
-          </div>
-          <img src="/src/assets/images.jpg" alt="Imagen de frutas y verduras">
-          </article>
-
-          <article class="card" id="jarabe">
-          <div>
-            <h2>Jarabes/Amargos</h2>
-            <p>Tipos de liquidos saborizantes</p>
-          </div>
-          <img src="/src/assets/images.jpg" alt="Imagen de jarabes para cocteles">
-          </article>
-
-          <article class="card" id="secos">
-          <div>
-            <h2>Secos</h2>
-            <p>Tipos de alimentos o decoraciones</p>
-          </div>
-          <img src="/src/assets/images.jpg" alt="Imagen de alimentos secos">
-          </article>
-
-        </section>
-        <br>
-        <section id="form-producto">
-              <header>
-                  <h1>Ingrese nuevo producto</h1>
-              </header>
-
-              <form action="POST" id="ingresar-producto">
-                  <label for="nombre">Nombre</label>
-                  <input type="text" name="nombre" id="nombre-prod" placeholder="Nombre del Producto">
-
-                  <div class="grupo-input">
-                      <label for="cantidad">Capacidad</label>
-                      <input type="text" name="cantidad" id="cantidad-prod" placeholder="Capacidad del Producto">
-                  </div>
-
-                  <div class="grupo-input">
-                      <label for="cantidad-botellas">Cantidad</label>
-                      <input type="text" name="cantidad-botellas" id="cantidad_botellas-prod" placeholder="Cantidad de botellas">
-                  </div>
-
-                  <label for="medida">Medida</label>
-                  <input type="text" name="medida" id="medida-prod" placeholder="Ingrese tipo de medida">
-
-                  <label for="marca">Marca</label>
-                  <input type="text" name="marca" id="marca" placeholder="Ingrese la marca si aplica">
-
-
-                  <div class="campos-dinamicos oculto" id="seccion-destilados">
-                      <div class="grupo-input ancho-completo">
-                          <label for="porcentaje">Porcentaje de Alcohol</label>
-                          <input type="text" name="porcentaje" id="porcentaje-dest" placeholder="Ingrese el porcentaje de alcohol">
-                      </div>
-                      
-                      <div class="grupo-input">
-                          <label for="subtipo">Tipo de Alcohol</label>
-                          <input type="text" name="tipo-alcohol" id="subtipo-dest" placeholder="Ingrese el tipo de alcohol (Ej. Vodka)">
-                      </div> 
-                  </div>
-
-                  <div class="campos-dinamicos oculto" id="seccion-mezcladores">
-                  </div>
-
-                  <div class="campos-dinamicos oculto" id="seccion-licores">
-                      <div class="grupo-input ancho-completo">
-                          <label for="porc-alc">Porcentaje de Alcohol</label>
-                          <input type="text" name="porcentaje" id="cant-alc" placeholder="Ingrese el porcentaje de alcohol">
-                      </div>                  
-                  </div>
-
-                  <div class="campos-dinamicos oculto" id="seccion-fresco">
-                  </div>
-
-                  <div class="campos-dinamicos oculto" id="seccion-jarabe">
-                      <div class="grupo-input ancho-completo">
-                          <label for="artesanal">Artesanal</label>
-                          <input type="text" name="artesanal" id="artesanal-jar" placeholder="Ingrese si es artesanal">
-                      </div>
-                  </div>
-
-                  <div class="campos-dinamicos oculto" id="seccion-secos">
-                      <div class="grupo-input ancho-completo">
-                      </div>
-                  </div>
-
-                  <label for="precio">Precio de Compra</label>
-                    <input type="text" name="precio" id="precio-prod" placeholder="Ingrese precio del produto">
-
-                  <label for="tipo-prod">Tipo</label>
-                          <select id="tipo-producto" name="tipo-prod" required>
-                              <option value="" selected disabled>Selecciona una opción</option>
-                              <option value="destilados">Destilados base</option>
-                              <option value="mezcladores">Mezcladores (Refrescos, jugos envasados)</option>
-                              <option value="licores">Licores y modificadores</option>
-                              <option value="frescos">Fruta y Verdura</option>
-                              <option value="jarabe">Jarabes/Amargos</option>
-                              <option value="secos">Alimentos y/o Decoraciones</option>
-                          </select>
-                      <input type="submit" value="Agregar Producto" id="guardarprod">
-              </form>
-          </section>
-      </main>
+    <!-- SELECTOR DE VISTAS (TABS PRINCIPALES) -->
+    <div class="tabs-gestor" id="tab-contendor">
+      <button type="button" class="tab-btn activo" id="tab-ing">Inv. Ingredientes</button>
+      <button type="button" class="tab-btn" id="tab-rec">Inv. Recetas</button>
     </div>
 
-    <div id="vista-detalle" class="vista-pagina oculto">
-      <button id="btn-regresar">Regresar al menu
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-      </button>
+    <!-- CONTENEDOR PRINCIPAL ÚNICO -->
+    <main class="contenedor-app">
+      
+      <!-- ========================================== -->
+      <!-- 1. VISTA: INVENTARIO DE INGREDIENTES       -->
+      <!-- ========================================== -->
+      <section id="vista-ingredientes" class="modulo-vista">
+        
+        <!-- 1.1 Catálogo de Categorías de Insumos -->
+        <div id="subvista-catalogo-ing" class="vista-pagina">
+          <header class="card-encabezado">
+            <h1>Inventario Principal de Ingredientes</h1>
+          </header>
 
-      <header class="card" id="card-titulo">
-        <h1>Inventario Ingredientes</h1>
-      </header>
+          <section class="grid-categorias-insumo" id="grid-princ-ing">
+            <article class="card-categoria" data-categoria="destilados">
+              <div>
+                <h2>Destilados Base</h2>
+                <p>Tipos de alcoholes</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Destilados Base">
+            </article>
 
-      <main>
-        <section class="cards-productos" id="contenedor-cards-prod">
+            <article class="card-categoria" data-categoria="licores">
+              <div>
+                <h2>Licores y Modificadores</h2>
+                <p>Alcoholes secundarios y endulzantes</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Licores">
+            </article>
+
+            <article class="card-categoria" data-categoria="jarabes">
+              <div>
+                <h2>Jarabes / Amargos</h2>
+                <p>Líquidos saborizantes</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Jarabes">
+            </article>
+
+            <article class="card-categoria" data-categoria="mezcladores">
+              <div>
+                <h2>Mezcladores</h2>
+                <p>Bebidas no alcohólicas</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Mezcladores">
+            </article>
+
+            <article class="card-categoria" data-categoria="frescos">
+              <div>
+                <h2>Frescos</h2>
+                <p>Frutas, verduras y cítricos</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Frescos">
+            </article>
+
+            <article class="card-categoria" data-categoria="secos">
+              <div>
+                <h2>Secos</h2>
+                <p>Alimentos y guarniciones</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Secos">
+            </article>
           </section>
-      </main>
-    </div>
 
-    <div id="modal-editar-prod" class="modal-backdrop oculto">
-      <div class="modal-contenido">
-                        
-        <div class="modal-header">
-          <h3>Editar Producto</h3>
-          <button class="btn-cerrar-modal">&times;</button>
+          <!-- 1.2 Formulario de Alta de Producto -->
+          <section id="seccion-form-producto" class="card-formulario-alta">
+            <header>
+              <h2>Ingresar Nuevo Insumo</h2>
+            </header>
+
+            <form action="POST" id="ingresar-producto" class="form-grid">
+              <div class="grupo-input ancho-completo">
+                <label for="nombre-prod">Nombre</label>
+                <input type="text" name="nombre" id="nombre-prod" placeholder="Nombre del Insumo" required>
+              </div>
+
+              <div class="grupo-input">
+                <label for="cantidad_prod-prod">Cantidad Stock</label>
+                <input type="number" min="0" name="cantidad-prod" id="cantidad_prod-prod" placeholder="Unidades" required>
+              </div>
+
+              <div class="grupo-input">
+                <label for="tipo-unidad">Unidad de Medida</label>
+                <input type="text" name="tipo-unid" id="tipo-unidad" readonly>
+              </div>
+
+              <div class="grupo-input">
+                <label for="marca-prod">Marca</label>
+                <input type="text" name="marca" id="marca-prod" placeholder="Ej. Don Julio, Bacardí">
+              </div>
+
+              <div class="grupo-input">
+                <label for="precio-prod">Precio de Compra</label>
+                <input type="number" step="0.01" min="0" name="precio" id="precio-prod" placeholder="$0.00">
+              </div>
+
+              <div class="grupo-input ancho-completo">
+                <label for="tipo-producto">Tipo de Insumo</label>
+                <select id="tipo-producto" name="tipo-prod" required>
+                  <option value="" selected disabled>Selecciona una categoría</option>
+                  <option value="destilados">Destilados Base</option>
+                  <option value="licores">Licores y Modificadores</option>
+                  <option value="jarabes">Jarabes / Amargos</option>
+                  <option value="mezcladores">Mezcladores</option>
+                  <option value="frescos">Frescos</option>
+                  <option value="secos">Secos</option>
+                </select>
+              </div>
+
+              <!-- CAMPOS DINÁMICOS POR CATEGORÍA -->
+              <div id="contenedor-dinamico-insumo" class="ancho-completo">
+                <!-- Seccion Destilados -->
+                <div class="campos-dinamicos oculto" id="dinamico-destilados">
+                  <div class="grid-2-col">
+                    <div class="grupo-input">
+                      <label for="porcentaje-dest">Porcentaje Alcohol (% Vol)</label>
+                      <input type="number" step="0.1" name="porcentaje" id="porcentaje-dest" placeholder="Ej. 38%">
+                    </div>
+                    <div class="grupo-input">
+                      <label for="subtipo-dest">Subtipo de Alcohol</label>
+                      <input type="text" name="tipo-alcohol" id="subtipo-dest" placeholder="Ej. Tequila, Ron, Vodka">
+                    </div>
+                  </div>
+                  <div class="grupo-input">
+                    <label for="capacidad-dest">Capacidad por Envase</label>
+                    <input type="number" name="capacidad_envase" id="capacidad-dest" placeholder="Ej. 750 (ml)">
+                  </div>
+                </div>
+
+                <!-- Seccion Mezcladores -->
+                <div class="campos-dinamicos oculto" id="dinamico-mezcladores">
+                  <div class="grupo-input">
+                    <label for="capacidad-mezc">Capacidad por Envase</label>
+                    <input type="number" name="capacidad_envase" id="capacidad-mezc" placeholder="Ej. 355 (ml)">
+                  </div>
+                </div>
+
+                <!-- Seccion Licores -->
+                <div class="campos-dinamicos oculto" id="dinamico-licores">
+                  <div class="grid-2-col">
+                    <div class="grupo-input">
+                      <label for="porcentaje-lic">Porcentaje Alcohol (% Vol)</label>
+                      <input type="number" step="0.1" name="porcentaje" id="porcentaje-lic" placeholder="Ej. 20%">
+                    </div>
+                    <div class="grupo-input">
+                      <label for="capacidad-lic">Capacidad por Envase</label>
+                      <input type="number" name="capacidad_envase" id="capacidad-lic" placeholder="Ej. 700 (ml)">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Seccion Jarabes -->
+                <div class="campos-dinamicos oculto" id="dinamico-jarabes">
+                  <div class="grid-2-col">
+                    <div class="grupo-input">
+                      <label for="artesanal-jar">¿Es Artesanal?</label>
+                      <select name="artesanal" id="artesanal-jar">
+                        <option value="si">Sí</option>
+                        <option value="no" selected>No</option>
+                      </select>
+                    </div>
+                    <div class="grupo-input">
+                      <label for="capacidad-jar">Capacidad por Envase</label>
+                      <input type="number" name="capacidad_envase" id="capacidad-jar" placeholder="Ej. 1000 (ml)">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" id="btn-guardar-prod" class="btn-cta ancho-completo">Agregar Producto</button>
+            </form>
+          </section>
         </div>
 
-                        <!-- FORMULARIO DE EDICIÓN (Conecta con tu TS/MySQL) -->
-      <form id="editar-producto">
-        <input type="hidden" id="edit-id-modal" name="id">
-          <h3 id="titulo-prod-modal"></h3>
+        <!-- 1.3 Subvista: Detalle de Productos por Insumo -->
+        <div id="subvista-detalle-ing" class="vista-pagina oculto">
+          <button type="button" class="btn-regresar" id="btn-regresar-ing">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Volver a Categorías</span>
+          </button>
 
-            <div class="grid-2-col">
-              <div class="grupo-input">
-                <label for="edit-cantidad">Cantidad nueva</label>
-                <input type="number" min="0" id="edit-cantidad" name="cantidad_botellas" placeholder="Cant. Botellas Nuevas" required>
+          <header class="card-encabezado">
+            <h1 id="titulo-detalle-ing">Insumos Filtrados</h1>
+          </header>
+
+          <section class="grid-cards-items" id="contenedor-items-ing">
+            <!-- Inyectado dinámicamente desde TS -->
+          </section>
+        </div>
+      </section>
+
+      <!-- ========================================== -->
+      <!-- 2. VISTA: INVENTARIO DE RECETAS            -->
+      <!-- ========================================== -->
+      <section id="vista-recetas" class="modulo-vista oculto">
+        
+        <!-- 2.1 Catálogo de Categorías de Recetas -->
+        <div id="subvista-catalogo-rec" class="vista-pagina">
+          <header class="card-encabezado">
+            <h1>Inventario Principal de Recetas</h1>
+          </header>
+
+          <section class="grid-categorias-recetas" id="grid-princ-rec">
+            <article class="card-categoria" data-categoria-rec="clásicos">
+              <div>
+                <h2>Clásicos</h2>
+                <p>Recetas tradicionales</p>
               </div>
+              <img src="/src/assets/images.jpg" alt="Clásicos">
+            </article>
+
+            <article class="card-categoria" data-categoria-rec="tropicales">
+              <div>
+                <h2>Tropicales</h2>
+                <p>Coctelería frutal</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Tropicales">
+            </article>
+
+            <article class="card-categoria" data-categoria-rec="fuertes">
+              <div>
+                <h2>Fuertes</h2>
+                <p>Alta graduación alcohólica</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Fuertes">
+            </article>
+
+            <article class="card-categoria" data-categoria-rec="highballs">
+              <div>
+                <h2>Highballs</h2>
+                <p>Tragos largos refrescantes</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Highballs">
+            </article>
+
+            <article class="card-categoria" data-categoria-rec="shots">
+              <div>
+                <h2>Shots</h2>
+                <p>Dosis directas</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Shots">
+            </article>
+
+            <article class="card-categoria" data-categoria-rec="café">
+              <div>
+                <h2>Café</h2>
+                <p>Bebidas y mixología con café</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Café">
+            </article>
+
+            <article class="card-categoria" data-categoria-rec="mocktails">
+              <div>
+                <h2>Mocktails</h2>
+                <p>Sin contenido alcohólico</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Mocktails">
+            </article>
+
+            <article class="card-categoria" data-categoria-rec="autor">
+              <div>
+                <h2>Autor</h2>
+                <p>Creaciones exclusivas de la casa</p>
+              </div>
+              <img src="/src/assets/images.jpg" alt="Autor">
+            </article>
+          </section>
+        </div>
+
+        <!-- 2.2 Subvista: Detalle de Recetas por Categoría -->
+        <div id="subvista-detalle-rec" class="vista-pagina oculto">
+          <button type="button" class="btn-regresar" id="btn-regresar-rec">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <span>Volver a Categorías</span>
+          </button>
+
+          <header class="card-encabezado">
+            <h1 id="titulo-detalle-rec">Recetas Filtradas</h1>
+          </header>
+
+          <section class="grid-cards-items" id="contenedor-items-rec">
+            <!-- Inyectado dinámicamente desde TS -->
+          </section>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- 3. MODALES GLOBALES                        -->
+    <!-- ========================================== -->
+    <div id="modal-editar" class="modal-backdrop oculto">
+      <div class="modal-contenido oculto" id="modal-editar-prod">  
+        <div class="modal-header">
+          <h3 id="titulo-prod-modal">Editar Producto</h3>
+          <button type="button" class="btn-cerrar-modal" aria-label="Cerrar">&times;</button>
+        </div>
+
+        <form id="form-editar-producto">
+          <input type="hidden" id="edit-id-modal" name="id">
+
+          <div class="grid-2-col">
             <div class="grupo-input">
-              <label for="edit-precio">Precio Nuevo</label>
-              <input type="number" step="0.01" id="edit-precio" placeholder="Si aplica..." name="precio">
+              <label for="edit-cantidad">Cantidad Stock</label>
+              <input type="number" min="0" id="edit-cantidad" name="cantidad_botellas" required>
             </div>
+            <div class="grupo-input">
+              <label for="edit-capacidad">Capacidad / Total</label>
+              <input type="number" step="0.01" id="edit-capacidad" name="cantidad_total" required>
+            </div>
+          </div>
+
+          <div class="modal-acciones">
+            <button type="button" class="btn-eliminar-modal" id="btn-eliminar-insumo">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Eliminar</span>
+            </button>
+            <button type="button" class="btn-cancelar-modal btn-cerrar-modal">Cancelar</button>
+            <button type="submit" class="btn-guardar-modal">Guardar Cambios</button>
+          </div>
+        </form>
+
       </div>
 
-      <div class="modal-acciones">
-        <button type="button" class="btn-eliminar" id="btn-eliminar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-          Eliminar
-        </button>
-        <button type="button" class="btn-cancelar btn-cerrar-modal">Cancelar</button>
-        <button type="submit" class="btn-guardar">Guardar Cambios</button>
-      </div>
-      </form>
+      <div class="modal-cotenido oculto" id="modal-editar-rec">
+        <div class="modal-header">
+          <h3 id="titulo-rec-modal"></h3>
+          <button type="button" class="btn-cerrar-modal" aria-label="Cerrar">&times;</button>
+        </div>
 
+       <form id="form-editar-receta">
+        <input type="hidden" id="edit-id-modal-rec" name="id">
+  
+          <div class="seccion-superior-modal">
+            
+            <div class="contenedor-upload-img">
+                <label for="input-foto-receta" id="dropzone-foto">
+                    <img id="preview-foto" src="" alt="Vista previa" class="oculto">
+                    <div id="placeholder-foto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                        <span>Subir Foto</span>
+                    </div>
+                </label>
+                <input type="file" id="input-foto-receta" name="imagenRF" accept="image/*" class="oculto">
+            </div>
+
+            <div class="columna-inputs-estaticos">
+              <div class="grupo-input">
+                <label for="edit-nombre-rec">Nombre</label>
+                <input type="text" id="edit-nombre-rec" name="nombre" required>
+              </div>
+              
+              <div class="grid-2-col-modal">
+                <div class="grupo-input">
+                  <label for="edit-precio-rec">Precio</label>
+                  <input type="number" step="0.01" id="edit-precio-rec" name="precio" required>
+                </div>
+                <div class="grupo-input">
+                  <label for="edit-link-rec">Link Video</label>
+                  <input type="text" id="edit-link-rec" name="link_Youtube" required>
+                </div>
+              </div>
+            </div>
+
+          </div> 
+          <div class="seccion-ingredientes-modal" id="lista-ingredientes-receta">
+          </div>
+
+          <div class="modal-acciones">
+            <button type="button" class="btn-eliminar-modal" id="btn-eliminar-receta">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              <span>Eliminar</span>
+            </button>
+            <button type="button" class="btn-cancelar-modal btn-cerrar-modal">Cancelar</button>
+            <button type="submit" class="btn-guardar-modal">Guardar Cambios</button>
+          </div>
+
+        </form>
       </div>
     </div>
+
+    <!-- ========================================== -->
+    <!-- 4. BARRA DE NAVEGACIÓN FLOTANTE (GLOBAL)   -->
+    <!-- ========================================== -->
+    <nav id="cambiar_pag">
+      <a href="indexRec.html" class="btn-nav">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        <span>Crear Receta</span>
+      </a>
+      
+      <a href="indexMenu.html" class="btn-nav">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 22h8"></path>
+          <path d="M12 11v11"></path>
+          <path d="m19 3-7 8-7-8Z"></path>
+        </svg>
+        <span>Ir al Menú</span>
+      </a>
+    </nav>
 
     <script type="module" src="/src/pages/inventario.ts"></script>
   </body>
 </html>
+

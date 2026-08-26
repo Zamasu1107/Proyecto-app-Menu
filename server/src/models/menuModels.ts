@@ -1,5 +1,7 @@
 import { Prisma } from "../generated/prisma/client";
 import prisma from "../db/prisma/prismaDB";
+import { conversionUnid } from "../utilities/conversorUnid";
+import { ActualizarDatos } from "../types/esquemas";
 
 export class MenuModel {
     static async obtenerIng () {
@@ -36,8 +38,14 @@ export class MenuModel {
         }
     }
 
-    static async editarProductoExistente ({ id, input}: {id:string, input:Prisma.IngredienteCreateInput}) {
-        const updateIng = await prisma.ingrediente.update({ where: { id: id, activo: true}, data:input})
+    static async editarProductoExistente ({ id, input}: {id:string, input:ActualizarDatos}) {
+        const updateIng = await prisma.ingrediente.update({ 
+            where: { id: id, activo: true}, 
+                data: { 
+                    cantidad_prod:{ increment: input.cantidad_prod}, 
+                    cantidad_total: {increment: input.prodSuma}
+                }
+            })
         
         return updateIng;
     }
@@ -57,12 +65,18 @@ export class MenuModel {
 
     static async obtenerRec () {
         const recetas = await prisma.receta.findMany({
-            include: { recetas_ingredientes: { include : { ingrediente: true}}},
+            include: {
+                recetas_ingredientes: { select: { cantidad_necesaria: true, cantidad_medida:true,
+                    ingrediente: { select: { cantidad_total:true, nombre:true, cantidad_prod:true} }
+                }}
+            }
         })
 
-        const recetasPosibles = recetas.filter((rec) => rec.recetas_ingredientes.length > 0 && rec.recetas_ingredientes.every(ing => ing.ingrediente.cantidad_ml >= ing.cantidad_necesaria))
+        // const recetasPosibles = recetas.filter((rec) => 
+        //     rec.recetas_ingredientes.length > 0 && rec.recetas_ingredientes.every(ing => 
+        //         (ing.ingrediente.cantidad_total ?? ing.ingrediente.cantidad_prod) >= ing.cantidad_necesaria))
 
-        return recetasPosibles;
+        return recetas;
     }
 
     static async guardarRec (input:Prisma.RecetaCreateInput) {
@@ -81,43 +95,58 @@ export class MenuModel {
             where: {id: id},
             include: {
                 recetas_ingredientes: {
-                    include: {
-                        ingrediente:true
+                    select: { cantidad_necesaria: true,
+                        id_ingrediente: true,
+                        id_receta: true,
+                        ingrediente: {
+                        select: {
+                            cantidad_total: true,
+                            id: true,
+                            unidad_medida: true,
+                            tipo_medida:true,
+                            cantidad_prod:true
+                        }
                     }
                 }
             }
-        });
-
-        if (receta) {
-            const validacion = receta.recetas_ingredientes.every((ing) => ing.ingrediente.cantidad_ml >= ing.cantidad_necesaria)
-            if (!validacion) {
-                throw new Error ("Ingredientes insuficientes en el inventario");
             }
+        });
+        if (!receta) {
+            throw new Error('La receta no existe')
+        }
 
-            const operacionResta = receta.recetas_ingredientes.flatMap((ing) => {
-                return [ 
-                    prisma.ingrediente.update({
-                    where: { 
-                        id: ing.ingrediente.id,
-                        cantidad_ml :{ gte: ing.cantidad_necesaria}
-                    },
-                        data: {
-                            cantidad_ml: {
-                                decrement: ing.cantidad_necesaria
-                            }
+        const unidConvertidos = receta.recetas_ingredientes.map((ing) => {
+            const cantRealDescontar = conversionUnid(ing.cantidad_necesaria.toNumber(), ing.ingrediente.unidad_medida, ing.ingrediente.tipo_medida as string) 
+            return ({...ing, cantidadReal: cantRealDescontar})
+        })
+
+        const validacion = unidConvertidos.every((ing) => ing.ingrediente.cantidad_total?.toNumber() ?? ing.ingrediente.cantidad_prod >= ing.cantidadReal)
+        if (!validacion) {
+            throw new Error ("Ingredientes insuficientes en el inventario");
+        }
+        const operacionResta = unidConvertidos.flatMap((ing) => {
+            return [ 
+                prisma.ingrediente.update({
+                where: { 
+                    id: ing.ingrediente.id,
+                    cantidad_ml :{ gte: ing.cantidadReal}
+                },
+                    data: {
+                        cantidad_ml: {
+                            decrement: ing.cantidadReal
                         }
-                    }),
-                    prisma.historial_recetas.create({
-                        data: {
-                            cantidad_descont : ing.cantidad_necesaria,
-                            ingrediente : { connect : {id: ing.id_ingrediente}},
-                            receta : { connect : {id: ing.id_receta}}
-                        }
-                    })
-                    ]
-                });
-            const operacion = await prisma.$transaction(operacionResta)
-            return operacion 
-        } 
+                    }
+                }),
+                prisma.historial_recetas.create({
+                    data: {
+                        cantidad_descont : ing.cantidadReal,
+                        ingrediente : { connect : {id: ing.id_ingrediente}},
+                        receta : { connect : {id: ing.id_receta}}
+                    }
+                })
+                ]
+            });
+        const operacion = await prisma.$transaction(operacionResta)
+        return operacion 
     }
 }
