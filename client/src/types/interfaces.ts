@@ -19,7 +19,8 @@ export interface DatosForm {
   marca: string;
   tipo_alcohol: string | null;
   tipo_insumo: string;
-  cantidad_prod: number | 1 
+  cantidad_prod: number | 1 ,
+  cantidad_unitaria: number | 1
 }
 
 export interface EditForm {
@@ -28,7 +29,7 @@ export interface EditForm {
 }
 
 export interface Ingdinamico {
-  id?:string;
+  id_ingrediente?:string;
   nombre?: string;
   cantidad_medida?: string;
   cantidad_necesaria?:number | null;
@@ -61,4 +62,17 @@ export interface RecetaIngPrisma {
       nombre: string;
     }
   }[]
+}
+
+export interface MapaInsumos {
+  destilados: string;
+  mezcladores: string;
+  licores: string;
+  jarabes: string;
+}
+
+export interface IngLista {
+  id:string;
+  cantidad_medida: string;
+  cantidad_necesaria:number;
 }

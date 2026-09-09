@@ -10,7 +10,7 @@ POST http://localhost:1001/api/ingredientes
 Content-Type: application/json
 
 {
-    "nombre":"William Turner", 
+    "nombre":"Bacardi", 
     "tipo_insumo":"Destilados", 
     "cantidad_ml":500, 
     "unidad_medida":"ml", 

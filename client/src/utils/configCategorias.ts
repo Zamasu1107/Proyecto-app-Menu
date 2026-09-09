@@ -1,7 +1,8 @@
+import type { MapaInsumos } from "../types/interfaces"
 import { contenedorDestilados, contenedorMezcladores, contenedorLicores, contenedorJarabes, contenedorFrescos, contenedorSecos, inputUnidad } from "./domContent"
 
-const configCategorias = {
-  destilados : {
+export const configCategorias = {
+  destilados: {
     contendor: contenedorDestilados,
     inputUnidad: inputUnidad,
     unidadBase: 'ml'
@@ -33,4 +34,9 @@ const configCategorias = {
   }
 }
 
-export default configCategorias 
+export const configSelectsDinamicos:MapaInsumos = {
+  destilados: 'capacidad_envase-dest',
+  mezcladores: 'capacidad_envase-mez',
+  licores: 'capacidad_envase-lic',
+  jarabes: 'capacidad_envase-jar'
+}

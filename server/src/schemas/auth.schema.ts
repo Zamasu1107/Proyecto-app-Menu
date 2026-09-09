@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { Role } from "../generated/prisma/enums";
+import 'dotenv/config'
 
 export const authNewUser = z.object({
   new_username: z
@@ -35,6 +36,21 @@ export const authUser = z.object({
     .default('ADMIN')
 });
 
-export type ValidarUsers = z.infer<typeof authUser>
+const secureEnv = z.object({
+  PORT : z
+  .coerce.number()
+  .positive(),
+  SECRET_KEY : z
+  .string()
+  .min(10),
+  FRONTEND_URL : z
+  .url(),
+  DATABASE_URL : z
+  .url() 
+})
+
+export const admitedEnv = secureEnv.parse(process.env);
+
+export type ValidarUsers = z.infer<typeof authUser>;
 
 export type ValidarNewUsers = z.infer<typeof authNewUser>;

@@ -30,6 +30,7 @@ model Ingrediente {
   nombre               String                 @unique(map: "nombre") @db.VarChar(100)
   tipo_insumo          String                 @db.VarChar(50)
   cantidad_total       Decimal?               @db.Decimal(10, 2)
+  cantidad_unitaria    Int                    @db.Int
   unidad_medida        String                 @db.VarChar(20)
   tipo_medida          FamiliaMedida                  
   precio               Decimal                @db.Decimal(10, 2)
@@ -49,6 +50,7 @@ model Receta {
   link_Youtube         String?                @db.Text
   precio               Decimal?               @db.Decimal(10, 2)
   categoria            String                 @db.VarChar(25) 
+  activo               Boolean                @default(true)
   recetas_ingredientes recetas_ingredientes[]
   Historial_recetas    Historial_recetas[]
 }

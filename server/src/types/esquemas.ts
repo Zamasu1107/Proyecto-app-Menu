@@ -12,7 +12,7 @@ export interface Ingredientes {
 }
 
 export interface IngredientesRec {
-    id:string;
+    id_ingrediente:string;
     nombre:string; 
     cantidad_necesaria: number;
     cantidad_medida: string;
@@ -36,4 +36,14 @@ export interface MiPayload {
 export interface ActualizarDatos {
     cantidad_prod: number,
     prodSuma: number
+}
+
+export class ClientError extends Error {
+  constructor(message: string) {
+    // Llama al constructor de la clase nativa Error
+    super(message); 
+    
+    // Asegura que el nombre del error corresponda a esta clase
+    this.name = 'ClientError'; 
+  }
 }

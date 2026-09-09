@@ -1,3 +1,5 @@
+import { FamiliaMedida } from "../generated/prisma/enums";
+
 const multiplicadorUnid: Record<string, Record<string, number>>= {
     VOLUMEN : {
         ml: 1,
@@ -22,6 +24,15 @@ const multiplicadorUnid: Record<string, Record<string, number>>= {
         twist: 1,
     }   
 }
+
+export const tipoFamilias: Record<string, FamiliaMedida> = {
+                destilados: 'VOLUMEN',
+                mezcladores: 'VOLUMEN',
+                licores: 'VOLUMEN',
+                frescos: 'PESO',
+                jarabes: 'VOLUMEN',
+                secos: 'PESO'
+            }
 
 export function conversionUnid (cantidad:number, unidad:string, familia:string) {
     

@@ -1,41 +1,26 @@
 import { Prisma } from "../generated/prisma/client";
 import prisma from "../db/prisma/prismaDB";
 import { conversionUnid } from "../utilities/conversorUnid";
-import { ActualizarDatos } from "../types/esquemas";
+import { ActualizarDatos, ClientError } from "../types/esquemas";
+import { promise } from "zod";
 
 export class MenuModel {
     static async obtenerIng () {
-        try {
-            const inventario = await prisma.ingrediente.findMany({ where:{ activo:true}});
+        const inventario = await prisma.ingrediente.findMany({ where:{ activo:true }, orderBy: { nombre: 'asc' }});
 
-            return inventario
-        } catch (error) {
-            console.log(error)
-            throw new Error('No se pudo cargar la base de datos')
-        }
+        return inventario
     }
 
     static async obtenerNombre (nombre:string) {
-        try {
+        const datos = await prisma.ingrediente.findUnique({where: {nombre: nombre,},select: {id: true,nombre: true,activo: true,},});
 
-            const datos = await prisma.ingrediente.findMany({where: {nombre: nombre,},select: {id: true,nombre: true,activo: true,},});
-
-            return datos;
-        } catch (error) {
-            console.log(error)
-            throw new Error('No se pudo cargar la base de datos')
-        }
+        return datos;
     }
 
     static async guardarIng (input:Prisma.IngredienteCreateInput) {
-        try {
-            const producto = await prisma.ingrediente.create({ data: input }) 
+        const producto = await prisma.ingrediente.create({ data: input }) 
 
-            return producto
-        } catch (error) {
-            console.log(error)
-            throw new Error('No se pudo guardar el ingrediente')
-        }
+        return producto
     }
 
     static async editarProductoExistente ({ id, input}: {id:string, input:ActualizarDatos}) {
@@ -65,29 +50,41 @@ export class MenuModel {
 
     static async obtenerRec () {
         const recetas = await prisma.receta.findMany({
+            where: {activo: true },
+            orderBy: { nombre: 'asc' },
             include: {
-                recetas_ingredientes: { select: { cantidad_necesaria: true, cantidad_medida:true,
+                recetas_ingredientes: { select: { cantidad_necesaria: true, cantidad_medida:true, id_ingrediente: true,
                     ingrediente: { select: { cantidad_total:true, nombre:true, cantidad_prod:true} }
                 }}
             }
         })
 
-        // const recetasPosibles = recetas.filter((rec) => 
-        //     rec.recetas_ingredientes.length > 0 && rec.recetas_ingredientes.every(ing => 
-        //         (ing.ingrediente.cantidad_total ?? ing.ingrediente.cantidad_prod) >= ing.cantidad_necesaria))
-
         return recetas;
     }
 
     static async guardarRec (input:Prisma.RecetaCreateInput) {
-        try {
-            const nuevaReceta = await prisma.receta.create({ data:input })
+        const nuevaReceta = await prisma.receta.create({ data:input })
 
-            return nuevaReceta;
-        } catch (error) {
-            console.log(error)
-            throw new Error('No se pudo guardar el ingrediente')
-        }
+        return nuevaReceta;
+    }
+
+    static async editarRec ({id, input}: {id:string, input:Prisma.RecetaUpdateInput}) {
+        const updateRec = await prisma.receta.update({
+            where: {id:id, activo: true},
+            data: input,
+            include: {
+                    recetas_ingredientes: { select: { cantidad_necesaria: true, cantidad_medida:true, id_ingrediente: true,
+                    ingrediente: { select: { cantidad_total:true, nombre:true, cantidad_prod:true } }
+                }}
+            }
+        })
+        return updateRec
+    }
+
+    static async borrarRec (id:string) {
+        const deleteRec = await prisma.receta.update( {where: {id:id}, data:{activo: false}})
+
+        return deleteRec
     }
 
     static async prepararRec (id:string) {
@@ -104,7 +101,8 @@ export class MenuModel {
                             id: true,
                             unidad_medida: true,
                             tipo_medida:true,
-                            cantidad_prod:true
+                            cantidad_prod:true,
+                            cantidad_unitaria:true
                         }
                     }
                 }
@@ -112,7 +110,7 @@ export class MenuModel {
             }
         });
         if (!receta) {
-            throw new Error('La receta no existe')
+            throw new ClientError('La receta no existe')
         }
 
         const unidConvertidos = receta.recetas_ingredientes.map((ing) => {
@@ -120,19 +118,20 @@ export class MenuModel {
             return ({...ing, cantidadReal: cantRealDescontar})
         })
 
-        const validacion = unidConvertidos.every((ing) => ing.ingrediente.cantidad_total?.toNumber() ?? ing.ingrediente.cantidad_prod >= ing.cantidadReal)
+        const validacion = unidConvertidos.every((ing) => (ing.ingrediente.cantidad_total?.toNumber() ?? ing.ingrediente.cantidad_prod) >= ing.cantidadReal)
         if (!validacion) {
-            throw new Error ("Ingredientes insuficientes en el inventario");
+            throw new ClientError("Ingredientes insuficientes en el inventario");
         }
+        
         const operacionResta = unidConvertidos.flatMap((ing) => {
             return [ 
                 prisma.ingrediente.update({
                 where: { 
                     id: ing.ingrediente.id,
-                    cantidad_ml :{ gte: ing.cantidadReal}
+                    cantidad_total: { gte: ing.cantidadReal }
                 },
                     data: {
-                        cantidad_ml: {
+                        cantidad_total: {
                             decrement: ing.cantidadReal
                         }
                     }
@@ -146,7 +145,23 @@ export class MenuModel {
                 })
                 ]
             });
-        const operacion = await prisma.$transaction(operacionResta)
+        const operacion = await prisma.$transaction(operacionResta);
+            
+        const operacionProd = operacion.flatMap((ing) => {
+            if ('cantidad_prod' in ing) {
+                const productoReal = Math.floor(Number(ing.cantidad_total) / ing.cantidad_unitaria)
+                    return [ prisma.ingrediente.update({
+                        where: { id: ing.id }, 
+                        data: {
+                            cantidad_prod : {
+                                set: productoReal
+                            }
+                        }
+                    }) ]
+                }
+                return [] 
+            })
+        await Promise.all(operacionProd)
         return operacion 
     }
 }

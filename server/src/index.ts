@@ -3,13 +3,14 @@ import cors from "cors";
 import cookieParser from 'cookie-parser'
 import router from "./routes/route";
 import authrouter from "./routes/auth.route";
+import { admitedEnv } from "./schemas/auth.schema";
 
 const app = express();
-const PORT = process.env.PORT || 1001;
+const PORT = admitedEnv.PORT;
 
 app.use(express.json())
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: admitedEnv.FRONTEND_URL,
     credentials: true
 }));
 app.use(cookieParser())

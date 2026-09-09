@@ -1,9 +1,10 @@
 import { PrismaClient } from "../../generated/prisma/client";
 import { PrismaMariaDb } from '@prisma/adapter-mariadb';
 import 'dotenv/config';
+import { admitedEnv } from "../../schemas/auth.schema";
 
 // 1. Usamos Node para desarmar tu DATABASE_URL en partes
-const url = new URL(process.env.DATABASE_URL!);
+const url = new URL(admitedEnv.DATABASE_URL);
 
 // 2. Configuramos el Adaptador con las piezas de tu URL
 const adapter = new PrismaMariaDb({

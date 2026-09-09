@@ -33,6 +33,9 @@ const registerForm = document.getElementById('register_form') as HTMLFormElement
 
 registerForm.addEventListener('submit', async (ev:Event) => {
     ev.preventDefault()
+    const userError = document.getElementById('user-error')!;
+    userError.classList.add('oculto')
+    userError.textContent = '' 
 
     const regForm = new FormData(registerForm)
     const verificarForm = Object.fromEntries(regForm.entries()) as { new_username: string, new_password: string, confirm_password: string }
@@ -49,10 +52,9 @@ registerForm.addEventListener('submit', async (ev:Event) => {
         new_username: verificarForm.new_username,
         new_password: verificarForm.new_password
     }
-    console.log(valForm);
     
     try {
-        const respuesta = await fetch('http://localhost:1001/api/register', {
+        const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -61,15 +63,17 @@ registerForm.addEventListener('submit', async (ev:Event) => {
             body: JSON.stringify(valForm)
         })
         if (respuesta.ok) {
-            window.location.href = 'http://localhost:5173/indexInv'
+            window.location.href = `${import.meta.env.VITE_HTTP_URL}/indexInv`
             registerForm.reset()
         } else {
-            const {error} = await respuesta.json()
-            const userError = document.getElementById('user-error')!;
-                userError.classList.remove('oculto')
-                userError.textContent = error  
-                console.log(error);
-                
+            if (respuesta.headers.get('Content-Type')?.includes('application/json')) {
+                const {error} = await respuesta.json()
+                const userError = document.getElementById('user-error')!;
+                    userError.classList.remove('oculto')
+                    userError.textContent = error      
+            } else {
+                alert('Error al registrar, intente de nuevo')
+            }
         }
     } catch (error) {
         console.log('Error de conexion', error);
@@ -78,12 +82,17 @@ registerForm.addEventListener('submit', async (ev:Event) => {
 
 loginForm.addEventListener('submit', async (ev:Event) => {
     ev.preventDefault()
+    const textError = document.querySelectorAll('.error-message');
+    textError.forEach((msg) => {
+        msg.classList.add('oculto')
+        msg.textContent = ''
+    })    
 
     const logForm = new FormData(loginForm)
     const valForm = Object.fromEntries(logForm.entries())
 
     try {
-        const respuesta = await fetch('http://localhost:1001/api/login', {
+        const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/login`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -93,20 +102,20 @@ loginForm.addEventListener('submit', async (ev:Event) => {
         })
 
         if (respuesta.ok) {
-            window.location.href = 'http://localhost:5173/indexInv'
+            window.location.href = `${import.meta.env.VITE_HTTP_URL}/indexInv`
             loginForm.reset();
         } else {
-            const {error} = await respuesta.json()
-            loginForm.reset();
-            const textError = document.querySelectorAll('.error-message');
-            textError.forEach((msg) => {
-                if (error) {
-                    msg.classList.remove('oculto')
-                    msg.textContent = error
-                    
-                }
-            })
-            console.log(error);
+            if (respuesta.headers.get('Content-Type')?.includes('application/json')) {
+                const {error} = await respuesta.json()
+                textError.forEach((msg) => {
+                    if (error) {
+                        msg.classList.remove('oculto')
+                        msg.textContent = error    
+                    }
+                }) 
+            } else {
+                alert('Error al validar, intente de nuevo')
+            }
         }
     } catch (error) {
         console.log('Error de conexion', error)

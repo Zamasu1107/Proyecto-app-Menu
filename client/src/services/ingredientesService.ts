@@ -1,14 +1,15 @@
 export async function obtenerIngredientes () {
   try {
-    const respuesta = await fetch('http://localhost:1001/api/ingredientes', {
+    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/ingredientes`, {
       credentials: 'include'
     })
-    const datos = await respuesta.json();
-
-    console.log("¡Conexión Exitosa! Aquí están mis ingredientes de MySQL:", datos)
-
-    return datos;
+    if (respuesta.ok) {
+      const datos = await respuesta.json();
+      return datos;
+    }
+    // console.log("¡Conexión Exitosa! Aquí están mis ingredientes de MySQL:", datos)
   } catch (error) {
     console.error("Error al conectar con la cocina (Servidor):", error);
+    return []
   }
 }

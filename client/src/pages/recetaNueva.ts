@@ -10,28 +10,26 @@ let catalogoIng:Ingrediente[] = []
 
 document.addEventListener('DOMContentLoaded', async () => {
     catalogoIng = await obtenerIngredientes();
-    console.log("Inventario cargado en memoria listo para buscar:", catalogoIng);
+    // console.log("Inventario cargado en memoria listo para buscar:", catalogoIng);
     const recetas = await obtenerRecetas();
 });
 
 function pintarTabla(ingFiltrados:Ingdinamico[]) {
     let htmlDin = ''
-
-    console.log('Esto es filtroTabla', ingFiltrados);
     
     ingFiltrados.forEach(nuevoIng => {
-        htmlDin +=` <tr class="filaIng" data-id="${nuevoIng.id}">
+        htmlDin +=` <tr class="filaIng" data-id="${nuevoIng.id_ingrediente}">
                         <td>
-                            <button data-id="${nuevoIng.id}" class="btn-quitarIng"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <button data-id="${nuevoIng.id_ingrediente}" class="btn-quitarIng"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="3 6 5 6 21 6"></polyline>
                                 <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>  
                             </button>
                         </td>
-                            <td class="nombre-tabla" data-id="${nuevoIng.id}">${nuevoIng.nombre}</td>
+                            <td class="nombre-tabla" data-id="${nuevoIng.id_ingrediente}">${nuevoIng.nombre}</td>
                             <td><input type="number" min="1" placeholder="Cant" class="cantidadIng" value="${nuevoIng.cantidad_necesaria || ''}" required></td>
                             <td class="medida-tabla"><select class="select-medida" name="medida" required>
                                                         <option value="" selected disabled>Medida</option>
-                                                        <optgroup label="VOLUMEN">
+                                                        <optgroup label="VOLUMEN"  ${'VOLUMEN' === nuevoIng.tipo_unidad ? '' : 'disabled'}>
                                                             <option value="ml">Ml</option>
                                                             <option value="oz">Oz</option>
                                                             <option value="L">Ltr</option>
@@ -41,12 +39,12 @@ function pintarTabla(ingFiltrados:Ingdinamico[]) {
                                                             <option value="cucharadita">Cucharadita</option>
                                                             <option value="taza">Taza</option>
                                                         </optgroup>
-                                                        <optgroup label="PESO">
+                                                        <optgroup label="PESO"  ${'PESO' === nuevoIng.tipo_unidad ? '' : 'disabled'}>
                                                             <option value="g">Gr</option>
                                                             <option value="kg">Kg</option>
                                                             <option value="lb">Lb</option>
                                                         </optgroup>
-                                                        <optgroup label="PIEZA">
+                                                        <optgroup label="PIEZA" ${'PIEZA' === nuevoIng.tipo_unidad ? '' : 'disabled'}>
                                                             <option value="pza">Pieza</option>
                                                             <option value="rdj">Rodaja</option>
                                                             <option value="hoja">Hoja</option>
@@ -55,19 +53,8 @@ function pintarTabla(ingFiltrados:Ingdinamico[]) {
                                                         </optgroup>
                     </tr>`
     })
-    if (tabla) {
-        tabla.innerHTML = htmlDin;  
-
-        const opciones = document.querySelectorAll('optgroup')
-        const tipoFamilia = ingFiltrados[0]?.tipo_unidad
-            opciones.forEach((optG) => {
-                optG.disabled = true
-                    if (optG.label === tipoFamilia) {                        
-                        optG.disabled = false; 
-                }
-            })  
-        }
-    }
+    if (tabla) tabla.innerHTML = htmlDin;  
+}
 
 const tablainput = document.getElementById('tabla') as HTMLTableElement
      
@@ -82,7 +69,6 @@ function filtrarIng() {
         resultado = catalogoIng.filter((producto:Ingrediente) => {return producto.nombre.toLowerCase().includes(textoBusqueda)})
     }
     mostrarResultado(resultado);
-    console.log('Esto es resultado', resultado);
 }
 
 function mostrarResultado (resultado:Ingrediente[]) {
@@ -107,8 +93,8 @@ const btnGuardar = document.getElementById('btn-principal') as HTMLButtonElement
 menuBusqueda.addEventListener(('click'), (Event: MouseEvent) => {
     const elementoLi = (Event.target as HTMLElement).closest('li');
     if (elementoLi) {
-        if (!listaIng.find(id => id.id === elementoLi.getAttribute('data-id')!)) {
-            listaIng.push({id: elementoLi.getAttribute('data-id')!, nombre: elementoLi.textContent, tipo_unidad: elementoLi.getAttribute('data-extra')!});
+        if (!listaIng.find(id => id.id_ingrediente === elementoLi.getAttribute('data-id')!)) {
+            listaIng.push({id_ingrediente: elementoLi.getAttribute('data-id')!, nombre: elementoLi.textContent, tipo_unidad: elementoLi.getAttribute('data-extra')!});
             barraBusqueda.value = '';
             menuBusqueda.classList.add('oculto');
         }
@@ -119,7 +105,6 @@ menuBusqueda.addEventListener(('click'), (Event: MouseEvent) => {
         btnGuardar.disabled = false
     }
     pintarTabla(listaIng);
-    console.log('Esto es listINg', listaIng);
     
 })
 
@@ -127,7 +112,7 @@ tablainput.addEventListener('input', (Event:Event) => {
     const target = Event.target as HTMLElement
     const fila = target.closest('tr')
     const inputActual = fila?.dataset.id
-    const ingredienteEncontrado = (listaIng.find(ingredienteActual => ingredienteActual.id === inputActual))
+    const ingredienteEncontrado = (listaIng.find(ingredienteActual => ingredienteActual.id_ingrediente === inputActual))
 
         if (ingredienteEncontrado && fila) {
             const cantidadActual = fila.querySelector('input[type="number"]') as HTMLInputElement
@@ -146,7 +131,7 @@ tablainput.addEventListener('click', (Event:MouseEvent) =>{
     if (Event.target) {
         if (btnEliminar) {
             const ingActual = (Event.target as HTMLTableElement).closest('tr')?.dataset.id
-            const borrarIngrediente = listaIng.filter(ingrediente => ingrediente.id !== ingActual)
+            const borrarIngrediente = listaIng.filter(ingrediente => ingrediente.id_ingrediente !== ingActual)
             listaIng = borrarIngrediente
             if (listaIng.length === 0){
                 btnGuardar.disabled = true
@@ -188,27 +173,28 @@ const formReceta = document.getElementById('form-receta-cabezera') as HTMLFormEl
 formReceta.addEventListener('submit', async (e:Event) => {
     e.preventDefault();
     const recetaNueva = new FormData(formReceta)
-    console.log(recetaNueva);
 
     recetaNueva.append('ingredientes', JSON.stringify(listaIng) )
-
-    console.log(recetaNueva);
     
     try {
-        const respuesta = await fetch('http://localhost:1001/api/recetas', {
+        const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/recetas`, {
           method: 'POST',
           credentials: 'include',
-          headers: {
-          },
           body: recetaNueva
         })
         if (respuesta.ok) {
             formReceta.reset();
             listaIng = []
-            pintarTabla(listaIng) 
+            pintarTabla(listaIng)
+            previewFoto.classList.add('oculto');
+            placeholderFoto.classList.remove('oculto'); 
         } else {
-            const error = await respuesta.json()
-            console.log(error);
+            if (respuesta.headers.get('Content-Type')?.includes('application/json')) {
+                const {error} = await respuesta.json()
+                alert(error.error);
+            } else {
+                alert('Error al crear la receta')
+            }
         }
       } catch (error) {
         console.error("Error al enviar los datos al Servidor:", error);

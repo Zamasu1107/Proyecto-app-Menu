@@ -1,13 +1,15 @@
 import { obtenerIngredientes } from "../services/ingredientesService";
 import { obtenerRecetas } from "../services/recetasServices";
-import { contendorBtnTab, contenedorRec, contendorIng, btnIngVisual, btnRecVisual, categoriaFormIng, formAñadirIng, modalFormIng, modalFormRec, vistaGeneralIng, vistaInsumos, vistaGeneralRec, vistaRecetas, seccionCatIng, contenedorInsumos, seccionCatRec, contenedorRecetas, btnRegresarIng, btnRegresarRec, modal, contenedorModalGlobal, formEditarIng, formEditarRec, contenedorIngRec} from '../utils/domContent'
+import { contendorBtnTab, contenedorRec, contendorIng, btnIngVisual, btnRecVisual, categoriaFormIng, formAñadirIng, modalFormIng, modalFormRec, vistaGeneralIng, vistaInsumos, vistaGeneralRec, vistaRecetas, seccionCatIng, contenedorInsumos, seccionCatRec, contenedorRecetas, btnRegresarIng, btnRegresarRec, modal, contenedorModalGlobal, formEditarIng, formEditarRec, contenedorIngRec, selectDinamico, inputFoto, previewFoto, placeholderFoto, btnEliminarIng, btnEliminarRec} from '../utils/domContent'
 import { actualizarPagina, modalFiltro, alternarVistas } from "../utils/vistas-filtros";
-import configCategorias from "../utils/configCategorias";
-import renderizarCards from "../utils/renderizarCards";
+import { configCategorias, configSelectsDinamicos } from "../utils/configCategorias";
+import { renderizarCards, renderizarModalEdit } from "../utils/renderizarCards";
 import type { DatosForm, EditForm, Ingrediente, RecetaIngPrisma } from "../types/interfaces";
 
 let datosIngGlobales:Ingrediente[] = []
 let datosRecGlobales:RecetaIngPrisma[] = []
+let ingEditando:RecetaIngPrisma['recetas_ingredientes'] = [];
+let fotoBase64: string = "";
 
 document.addEventListener('DOMContentLoaded', async () => {
     datosIngGlobales = await obtenerIngredientes();
@@ -51,14 +53,15 @@ formAñadirIng.addEventListener('submit', async (e:Event) => {
   const formIng = new FormData(formAñadirIng);
   const datosNuevos:DatosForm = {
     nombre: formIng.get('nombre')?.toString() || '',
-    cantidad_total: Number(formIng.get('capacidad_envase')),
     unidad_medida: formIng.get('tipo-unid') as string,
     precio: Number(formIng.get('precio')),
-    porcentaje_alcohol: Number(formIng.get('porcentaje')),
+    porcentaje_alcohol: categoriaFormIng.value === 'destilados' ? Number(formIng.get('porcentaje_dest')) : Number(formIng.get('porcentaje_lic')),
     marca: formIng.get('marca') as string,
     tipo_alcohol: formIng.get('tipo-alcohol') as string,
     tipo_insumo: formIng.get('tipo-prod') as string,
-    cantidad_prod: Number(formIng.get('cantidad-prod'))
+    cantidad_prod: Number(formIng.get('cantidad-prod')),
+    cantidad_total: Number(formIng.get(configSelectsDinamicos[categoriaFormIng.value as keyof typeof configSelectsDinamicos]) || 1),
+    cantidad_unitaria: Number(formIng.get(configSelectsDinamicos[categoriaFormIng.value as keyof typeof configSelectsDinamicos]) || 1)
   }
 
   if (categoriaFormIng.value !== 'destilados') {
@@ -67,6 +70,7 @@ formAñadirIng.addEventListener('submit', async (e:Event) => {
   if (categoriaFormIng.value !== 'destilados' && categoriaFormIng.value !== 'licores') {
     datosNuevos.porcentaje_alcohol = null;
   }
+ 
   try {
     const respuesta = await fetch('http://localhost:1001/api/ingredientes', {
       method: 'POST',
@@ -78,6 +82,11 @@ formAñadirIng.addEventListener('submit', async (e:Event) => {
     })
     if (respuesta.ok) {
       formAñadirIng.reset();
+      selectDinamico.forEach((campo) => {
+        if (!campo.classList.contains('oculto')) {
+          campo.classList.add('oculto')
+        }
+      })
       datosIngGlobales = await obtenerIngredientes();
     } else {
       const error = await respuesta.json()
@@ -116,7 +125,7 @@ seccionCatRec.addEventListener('click', (e:Event) => {
   if (!categoriaSelectRec) return
   const categoriaId = (categoriaSelectRec as HTMLElement).dataset.categoriaRec!
 
-  actualizarPagina(vistaGeneralRec, vistaRecetas, datosRecGlobales, 'categoria', categoriaId , contenedorRecetas, tipo)
+  actualizarPagina(vistaGeneralRec, vistaRecetas, datosRecGlobales, 'categoria', categoriaId , contenedorRecetas, tipo, datosIngGlobales)
 })
 
 contenedorRecetas.addEventListener('click', (e:Event) => {
@@ -128,30 +137,12 @@ contenedorRecetas.addEventListener('click', (e:Event) => {
     if (productoEncontrado && contenedorIngRec) {
       (document.getElementById('edit-id-modal-rec') as HTMLInputElement).value = productoEncontrado.id;
       (document.getElementById('titulo-rec-modal') as HTMLElement).textContent = `Editar Producto: ${productoEncontrado.nombre}`;
+      (document.getElementById('edit-nombre-rec') as HTMLInputElement).value =(productoEncontrado as RecetaIngPrisma).nombre;
+      (document.getElementById('edit-precio-rec') as HTMLInputElement).value = String((productoEncontrado as RecetaIngPrisma).precio);
+      (document.getElementById('edit-link-rec') as HTMLInputElement).value =(productoEncontrado as RecetaIngPrisma).link_Youtube;
 
-      // Recorremos los ingredientes actuales de la receta
-      contenedorIngRec.innerHTML = (productoEncontrado as RecetaIngPrisma).recetas_ingredientes.map((ingReq) => {
-        return `
-        <label class="titulo-seccion-lista">Ingredientes Necesarios</label>
-          
-          <div id="lista-ingredientes-receta">
-            <div class="fila-ingrediente-dinamico">
-              <select class="select-id-ingrediente">
-                ${datosIngGlobales.map((ingGlobal) => `
-                  <option value="${ingGlobal.id}" ${ingGlobal.id === ingReq.id_ingrediente ? 'selected' : ''}>
-                    ${ingGlobal.nombre}
-                  </option>
-                `).join('')}
-              </select>
-
-              <input type="number" class="input-cantidad-ingrediente" value="${ingReq.cantidad_necesaria}" placeholder="Cant.">
-              
-              <button type="button" class="btn-eliminar-fila" title="Eliminar ingrediente">&times;</button>
-            </div>
-          </div>
-        `;
-      }).join('');
-      alternarVistas(null, modal)
+      ingEditando = (productoEncontrado as RecetaIngPrisma).recetas_ingredientes
+      renderizarModalEdit((productoEncontrado as RecetaIngPrisma).recetas_ingredientes, datosIngGlobales)
     }
 })
 
@@ -178,8 +169,9 @@ contenedorModalGlobal.addEventListener('click', async (e:Event) => {
     const btnCategoria = (btnEliminarLocal as HTMLButtonElement).dataset.categoria
     const confirmacion = window.confirm('¿Estás seguro de que deseas eliminar este elemento?');
     if (confirmacion) {
+      btnEliminarLocal.textContent = 'Eliminando...'
       try {
-      const respuesta = await fetch(`http://localhost:1001/api/${btnTipo}s/${btnId}`, {
+      const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/${btnTipo}s/${btnId}`, {
         method: 'DELETE',
         credentials: 'include',
         headers: {
@@ -198,9 +190,18 @@ contenedorModalGlobal.addEventListener('click', async (e:Event) => {
                   alternarVistas(modal, null)
                   renderizarCards(insumosFiltrados, contenedorRecetas, 'receta')
                 }
-              } 
+              } else {
+                if (respuesta.headers.get('Content-Type')?.includes('application/json')) {
+                const {error} = await respuesta.json()
+                alert(error.error);
+                } else {
+                    alert('Error al eliminar el ingrediente')
+                }
+              }
       } catch(error) {
-        console.log('No se pudo mandar el ingrediente', error);
+        console.log('No se pudo eliminar el ingrediente', error);
+      } finally {
+        btnEliminarLocal.textContent = 'Eliminar'
       }
     }
   }
@@ -208,8 +209,10 @@ contenedorModalGlobal.addEventListener('click', async (e:Event) => {
 
 formEditarIng.addEventListener('submit', async(e:Event) => {
   e.preventDefault();
-  const idForm = (e.target as HTMLElement).closest('#edit-id-modal')
+  const idForm = document.getElementById('edit-id-modal')
   const idProducto = (idForm as HTMLInputElement).value
+  const btnCategoria = btnEliminarIng.dataset.categoria
+  
   const formModal = new FormData(formEditarIng)
   const editDatos:EditForm = {
     cantidad_total: Number(formModal.get('cantidad_total')),
@@ -217,7 +220,7 @@ formEditarIng.addEventListener('submit', async(e:Event) => {
   }
 
   try {
-    const respuesta = await fetch(`http://localhost:1001/api/ingredientes/${idProducto}`, {
+    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/ingredientes/${idProducto}`, {
       method: 'PATCH',
       credentials: 'include',
       headers: {
@@ -234,44 +237,108 @@ formEditarIng.addEventListener('submit', async(e:Event) => {
           return ing
         }
       })
-      renderizarCards(datosIngGlobales, contenedorInsumos, 'ingrediente')
+      const insumosFiltrados = datosIngGlobales.filter((ing) => ing.tipo_insumo === btnCategoria)
       formEditarIng.reset();
-      alternarVistas(modal, null) 
+      alternarVistas(modal, null)
+      renderizarCards(insumosFiltrados, contenedorInsumos, 'ingrediente')
+    } else {
+      if (respuesta.headers.get('Content-Type')?.includes('application/json')) {
+      const {error} = await respuesta.json()
+      alert(error);
+      } else {
+          alert('Error al editar el ingrediente')
+      }
     }
   } catch (error) {
     console.error("Error al enviar los datos al Servidor:", error);
   }
 })
 
+inputFoto?.addEventListener('change', (e: Event) => {
+    const target = e.target as HTMLInputElement;
+    if (target.files && target.files[0]) {
+        const archivo = target.files[0];
+
+        // Usamos FileReader para convertir la imagen local a Base64 String
+        const reader = new FileReader();
+        
+        reader.onload = (event) => {
+            fotoBase64 = event.target?.result as string;
+
+            // Rellenamos la imagen de vista previa y ocultamos el placeholder
+            previewFoto.src = fotoBase64;
+            previewFoto.classList.remove('oculto');
+            placeholderFoto.classList.add('oculto');
+        };
+
+        reader.readAsDataURL(archivo); // Inicia la lectura del archivo
+    }
+});
+
 formEditarRec.addEventListener('submit', async(e:Event) => {
   e.preventDefault()
   const filas = document.querySelectorAll('.fila-ingrediente-dinamico');
+  const idInput = document.getElementById('edit-id-modal-rec') as HTMLInputElement
+  const idRec = idInput.value
+  const btnCategoria = btnEliminarRec.dataset.categoria
 
   const formDatos = new FormData(formEditarRec);
 
   const datosLimpios = Array.from(filas).map((ingNuevo) => {
-    return {id_ingrediente: ingNuevo.querySelector('select')?.value, cantidad_necesaria: Number(ingNuevo.querySelector('input')?.value)}
+    const idIng = ingNuevo.querySelector('select')!.value
+    const ingEncontrado = datosIngGlobales.find(ingUnido => ingUnido.id === idIng)
+    return {id_ingrediente: ingNuevo.querySelector('select')!.value, cantidad_necesaria: Number(ingNuevo.querySelector('input')?.value), 
+      cantidad_medida: (ingNuevo.querySelector('input[type="text"]') as HTMLInputElement)?.value,
+      ingrediente: {
+        id : ingEncontrado!.id,
+        cantidad_total: Number(ingEncontrado?.cantidad_total),
+        nombre : ingEncontrado!.nombre
+      }
+    }
   })
-
-  formDatos.append('recetas_ingredientes', JSON.stringify(datosLimpios));
+  ingEditando = datosLimpios
+  
+  formDatos.append('ingredientes', JSON.stringify(ingEditando));
 
   try {
-    const respuesta = await fetch('http://localhost:1001/api/recetas', {
-      method: 'POST',
+    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/recetas/${idRec}`, {
+      method: 'PATCH',
           credentials: 'include',
           headers: {
           },
           body: formDatos
     })
     if (respuesta.ok) {
-            renderizarCards(datosIngGlobales, contenedorRecetas, 'receta')
-            formEditarRec.reset();
-            alternarVistas(modal, null) 
-        } else {
-            const error = await respuesta.json()
-            console.log(error);
-        }
-      } catch (error) {
-        console.error("Error al enviar los datos al Servidor:", error);
+      const datosNuevos = await respuesta.json()
+      datosRecGlobales = datosRecGlobales.map((dato) => {
+        if (dato.id === datosNuevos.id) {
+          return {...datosNuevos}
+        } else 
+          return dato
+      })
+      formEditarRec.reset();
+      const recetasFiltrados = datosRecGlobales.filter((ing) => ing.categoria === btnCategoria)
+      renderizarCards(recetasFiltrados, contenedorRecetas, 'receta', datosIngGlobales)
+      alternarVistas(modal, null) 
+    } else {
+      if (respuesta.headers.get('Content-Type')?.includes('application/json')) {
+      const {error} = await respuesta.json()
+      alert(error);
+      } else {
+          alert('Error al editar la receta')
       }
+    }
+  } catch (error) {
+      console.error("Error al enviar los datos al Servidor:", error);
+  }
 });
+
+contenedorIngRec?.addEventListener('click', (e:Event) => {
+  const btnEliminar = (e.target as HTMLElement).closest('.btn-eliminar-fila')
+  if (!btnEliminar) return
+  const idIng = (btnEliminar as HTMLButtonElement).dataset.id
+  
+  ingEditando = ingEditando.filter(ing => ing.id_ingrediente !== idIng)
+
+  renderizarModalEdit(ingEditando, datosIngGlobales)
+})

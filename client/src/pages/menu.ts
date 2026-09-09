@@ -1,35 +1,41 @@
 import { obtenerRecetas } from "../services/recetasServices";
-import type { RecetaIngPrisma } from "../types/interfaces";
+import { contenedor, barraBusqueda, barraNav, modalRec } from "../utils/domContent";
+import type { Ingrediente, RecetaIngPrisma } from "../types/interfaces";
+import { obtenerAuth } from "../services/authService";
 
 let recetasGlobales:RecetaIngPrisma[] = []
+let categoriaAct = ''
 
 document.addEventListener('DOMContentLoaded', async () => {
     recetasGlobales = await obtenerRecetas();
-    console.log("Inventario cargado en memoria listo para buscar:", recetasGlobales);
+    const authTipo = await obtenerAuth();
+    // console.log("Inventario cargado en memoria listo para buscar:", recetasGlobales);
     renderizarRecetas(recetasGlobales); 
-});
 
-const contenedor = document.getElementById('card-Recetas') as HTMLElement; 
+    if (authTipo !== true) {
+        const barraNav = document.getElementById('cambiar_pag');
+        barraNav!.style.display = 'none'
+    }
+});
 
 function renderizarRecetas(recetas:RecetaIngPrisma[]) {
 
     if (contenedor) {  
     const html = recetas.map((rec:RecetaIngPrisma) => {
-                    return `<article class="card-rec" data-id="${rec.id}">
-                                <img src="http://localhost:1001/uploads/${rec.imageRF}" alt="">
-                                <h2>${rec.nombre}</h2>
-                                <h4>Categoria: ${rec.categoria}</h4>
-                                <p>Precio: ${rec.precio || 'Consultar'}</p> 
-                            </article>` 
+        const recetasPosibles = rec.recetas_ingredientes.every(ing => 
+            Number(ing.ingrediente.cantidad_total) >= Number(ing.cantidad_necesaria))
+
+        return `<article class="card-rec ${recetasPosibles ? '' : 'receta-agotada'}" data-id="${rec.id}">
+                    <img src="http://localhost:1001/uploads/${rec.imageRF}" alt="">
+                    <h2>${rec.nombre}</h2>
+                    <h4>Categoria: ${rec.categoria}</h4>
+                    <p>Precio: ${rec.precio || 'Consultar'}</p> 
+                </article>` 
     }).join('')
 
     contenedor.innerHTML = html
    }
 }
-
-const barraBusqueda = document.getElementById('barra-busqueda') as HTMLInputElement;
-const barraNav = document.getElementById('card-Nav-Busqueda') as HTMLElement;
-const modalRec = document.getElementById('receta-modal') as HTMLDivElement;
 
 function filtrarRec () {
     if (!recetasGlobales || recetasGlobales.length === 0) return;
@@ -48,8 +54,6 @@ function filtrarRec () {
 
 barraBusqueda.addEventListener('input', filtrarRec);
 
-let categoriaAct = ''
-
 barraNav.addEventListener('click', (e:Event) => {
     const itemClickeado = (e.target as HTMLElement).closest('li')
     if (!itemClickeado) return
@@ -60,7 +64,8 @@ barraNav.addEventListener('click', (e:Event) => {
         return
     }
     categoriaAct = seccion
-    const resultado = recetasGlobales.filter((cat) => { return cat.categoria.toLowerCase() === seccion.toLowerCase()})
+    const resultado = recetasGlobales.filter((cat) => cat.categoria.toLowerCase() === seccion.toLowerCase().trim())
+    
     renderizarRecetas(resultado);
 })
 
@@ -86,7 +91,7 @@ contenedor.addEventListener('click', (e:Event) => {
                             <div id="info-rec">
                                 <h4>Ingredientes:</h4>
                                 <ul id="lista-ing">
-                                    ${recetaActual.recetas_ingredientes.map((ing) => { return `<li class="ing-listados"><span>${ing.ingrediente.nombre}</span><span>${ing.ingrediente.cantidad_total} ${ing.cantidad_medida}</span></li>`}).join('')}
+                                    ${recetaActual.recetas_ingredientes.map((ing) => { return `<li class="ing-listados"><span>${ing.ingrediente.nombre}</span><span>${ing.cantidad_necesaria} ${ing.cantidad_medida}</span></li>`}).join('')}
                                 </ul>
                                 <p id="precio">$${recetaActual.precio || 'Consultar'}</p>
                             </div>
@@ -121,7 +126,7 @@ modalRec.addEventListener('click', async (e:Event) => {
     if (botonPedir) {
         const botonId = botonPedir.dataset.id
         try {
-                await fetch(`http://localhost:1001/api/recetas/${botonId}/preparar`, {
+                const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/recetas/${botonId}/preparar`, {
                 method: 'PATCH',
                 credentials: 'include',
                 headers: {
@@ -129,9 +134,31 @@ modalRec.addEventListener('click', async (e:Event) => {
                 },
                 body: JSON.stringify({id: botonId})
             })
+            if (respuesta.ok) {
+                alert('Gracias por ordenar, el bartender le entragara su bebida pronto')
 
-            alert('Gracias por ordenar, el bartender le entragara su bebida pronto')
-            modalRec.classList.add('oculto')   
+                const datosNuevos = await respuesta.json()
+                const ingActualizados = datosNuevos.filter((ing:Ingrediente) => ing.cantidad_total )
+                const datosActualizados = recetasGlobales.map(receta => {
+                    receta.recetas_ingredientes.forEach(rec =>{ 
+                        const ingEncontrado = ingActualizados.find((ing:Ingrediente) => ing.id === rec.id_ingrediente)
+                        if (ingEncontrado) {
+                            rec.ingrediente.cantidad_total = ingEncontrado.cantidad_total
+                            return rec
+                        }
+                    })
+                    return {...receta}
+                })
+                modalRec.classList.add('oculto')
+                renderizarRecetas(datosActualizados)
+            } else {
+                if (respuesta.headers.get('Content-Type')?.includes('application/json')) {
+                    const error = await respuesta.json()
+                    alert(error.error)
+                } else {
+                    alert('Error al hacer el pedido')
+                }
+            }   
         } catch (error) {
            console.error("Error al pedir bebida:", error); 
         }

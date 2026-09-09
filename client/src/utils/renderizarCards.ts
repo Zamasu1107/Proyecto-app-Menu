@@ -1,16 +1,18 @@
 import type { Ingrediente, RecetaIngPrisma } from "../types/interfaces";
+import { contenedorIngRec, modal } from "./domContent";
+import { alternarVistas } from "./vistas-filtros";
 
-function renderizarCards(datosGenerales:Ingrediente[] | RecetaIngPrisma[], domContendor:HTMLElement, tipoSeccion:'ingrediente' | 'receta') {
+export function renderizarCards(datosGenerales:Ingrediente[] | RecetaIngPrisma[], domContendor:HTMLElement, tipoSeccion:'ingrediente' | 'receta', datosExtraGenerales?:Ingrediente[] | RecetaIngPrisma[]) {
   if (tipoSeccion === 'ingrediente') {
     if (domContendor) {
       const htmlCard = (datosGenerales as Ingrediente[]).map((ingrediente:Ingrediente) => {
         let estadoIngrediente = null;
         let mensajeEstado = null;
         
-        if(ingrediente.cantidad_total || ingrediente.cantidad_prod > 0 && ingrediente.cantidad_total  || ingrediente.cantidad_prod <= 250) {
+        if((ingrediente.cantidad_total || ingrediente.cantidad_prod) > 0 && (ingrediente.cantidad_total  || ingrediente.cantidad_prod) <= 250) {
           estadoIngrediente = 'dispo-media'
           mensajeEstado = 'Media'
-        }else if (ingrediente.cantidad_total === 0) {
+        }else if (ingrediente.cantidad_total === 0 || ingrediente.cantidad_prod === 0) {
           estadoIngrediente = 'dispo-baja'
           mensajeEstado = 'Agotada'
         } else {
@@ -45,11 +47,11 @@ function renderizarCards(datosGenerales:Ingrediente[] | RecetaIngPrisma[], domCo
       const htmlCard = (datosGenerales as RecetaIngPrisma[]).map((rec) => {
 
         const porcionesPorIng = rec.recetas_ingredientes.map((ingRequerido) => { 
-          const encontrarIng = (datosGenerales as Ingrediente[]).find( ing => ing.nombre === ingRequerido.ingrediente.nombre)
+          const encontrarIng = (datosExtraGenerales as Ingrediente[] || []).find( ing => ing.nombre === ingRequerido.ingrediente.nombre)
           return Math.floor((encontrarIng?.cantidad_total ?? encontrarIng?.cantidad_prod ?? 0) / (ingRequerido.cantidad_necesaria ?? 1))
         })
 
-        const bebidasPosibles = Math.min(...porcionesPorIng)
+        const bebidasPosibles = Math.min(...porcionesPorIng) 
 
         return `<article class="card-receta ${bebidasPosibles !== 0 ? 'receta-disponible' : 'receta-agotada'}">
                   <!-- COLUMNA IZQUIERDA: IMAGEN CON BADGE -->
@@ -97,4 +99,29 @@ function renderizarCards(datosGenerales:Ingrediente[] | RecetaIngPrisma[], domCo
   }
 }
 
-export default renderizarCards
+export function renderizarModalEdit(lista:RecetaIngPrisma['recetas_ingredientes'], datosIng:Ingrediente[]) {
+  if (contenedorIngRec) {
+    contenedorIngRec.innerHTML = `
+          <label class="titulo-seccion-lista">Ingredientes Necesarios</label>
+            <div id="lista-ingredientes-receta">
+        ${lista.map((ingReq) => {
+            return `
+                <div class="fila-ingrediente-dinamico">
+                  <select class="select-id-ingrediente">
+                    ${datosIng.map((ingGlobal) => `
+                      <option value="${ingGlobal.id}" ${ingGlobal.id === ingReq.id_ingrediente ? 'selected' : ''}>
+                        ${ingGlobal.nombre}
+                      </option>
+                    `).join('')}
+                  </select>
+    
+                  <input type="number" class="input-cantidad-ingrediente" value="${ingReq.cantidad_necesaria}" placeholder="Cant.">
+                  <input type="text" class="input-cantidad-ingrediente" value="${ingReq.cantidad_medida}" placeholder="Medida." disabled>
+                  
+                  <button type="button" class="btn-eliminar-fila" data-id="${ingReq.id_ingrediente}" title="Eliminar ingrediente">&times;</button>
+                </div>
+              </div>`;
+          }).join('')}`
+      }
+      alternarVistas(null, modal)
+}

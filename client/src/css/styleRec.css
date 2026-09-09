@@ -23,7 +23,8 @@ main {
     max-width: 520px; /* Tamaño ideal para vista móvil / tablet equilibrada */
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 25px;
+    padding-bottom: 70px;
 }
 
 /* --- CABECERA --- */

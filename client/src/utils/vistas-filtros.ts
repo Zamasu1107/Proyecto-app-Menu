@@ -1,8 +1,8 @@
-import renderizarCards from "./renderizarCards";
+import { renderizarCards }from "./renderizarCards";
 import type { Ingrediente, RecetaIngPrisma } from "../types/interfaces";
-import { modalFormIng, modalFormRec, btnEliminar } from "./domContent";
+import { modalFormIng, modalFormRec, btnEliminarIng, btnEliminarRec } from "./domContent";
 
-export function actualizarPagina(vistaGeneral:HTMLElement, subVista:HTMLElement, datos: Ingrediente[] | RecetaIngPrisma[], datoFiltrar:string, contendorId:string, contendor:HTMLElement, tipoRender:'ingrediente' | 'receta') {
+export function actualizarPagina(vistaGeneral:HTMLElement, subVista:HTMLElement, datos: Ingrediente[] | RecetaIngPrisma[], datoFiltrar:string, contendorId:string, contendor:HTMLElement, tipoRender:'ingrediente' | 'receta', datosExtra?:Ingrediente[] | RecetaIngPrisma[]) {
 
   vistaGeneral.classList.add('oculto')
   subVista.classList.remove('oculto')
@@ -21,23 +21,23 @@ export function actualizarPagina(vistaGeneral:HTMLElement, subVista:HTMLElement,
   return quitarAcentos(valorPropiedad) === quitarAcentos(contendorId);
     }); 
 
-  renderizarCards((datosFiltrados as Ingrediente[] | RecetaIngPrisma[]), contendor, tipoRender);
+  renderizarCards((datosFiltrados as Ingrediente[] | RecetaIngPrisma[]), contendor, tipoRender, datosExtra);
 }
 
 export function modalFiltro(id:string, tipoDato: Ingrediente[] | RecetaIngPrisma[], tipo:'ingrediente' | 'receta') {
   if (tipo === 'ingrediente') {
     modalFormIng.classList.remove('oculto')
-    btnEliminar.dataset.id = `${id}`
-    btnEliminar.dataset.tipo = `${tipo}`
+    btnEliminarIng.dataset.id = `${id}`
+    btnEliminarIng.dataset.tipo = `${tipo}`
     const encontrado = (tipoDato as Ingrediente[]).find((p) => p.id === id);
-    btnEliminar.dataset.categoria = encontrado?.tipo_insumo;
+    btnEliminarIng.dataset.categoria = encontrado?.tipo_insumo;
     return encontrado
   } else if (tipo === 'receta') {
     modalFormRec.classList.remove('oculto')
-    btnEliminar.dataset.id = `${id}`
-    btnEliminar.dataset.tipo = `${tipo}`
+    btnEliminarRec.dataset.id = `${id}`
+    btnEliminarRec.dataset.tipo = `${tipo}`
     const encontrado = (tipoDato as RecetaIngPrisma[]).find((p) => p.id === id);
-    btnEliminar.dataset.categoria = encontrado?.categoria;
+    btnEliminarRec.dataset.categoria = encontrado?.categoria;
     return encontrado
   }
 }
