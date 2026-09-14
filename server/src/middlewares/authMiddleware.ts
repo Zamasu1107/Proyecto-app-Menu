@@ -11,9 +11,11 @@ export const validarToken = ((req:Request, res:Response, next:NextFunction) => {
     try {
         const datos = jwt.verify(authToken, admitedEnv.SECRET_KEY) as MiPayload
         req.session = datos
-        next()    
+        next()  
+        return  
     } catch (error) {
-        res.status(401).json({error : 'Acceso no autorizado'});
+        return res.status(401).json({error : 'Acceso no autorizado'});
+        
     }
 })
 
@@ -22,4 +24,5 @@ export const validarAdmin = ((req:Request, res:Response, next:NextFunction) => {
         return res.status(403).json({ error: 'No tienes permisos para realizar esta acción' });
     } 
     next()
+    return
 })

@@ -1,7 +1,7 @@
 import { Response, Request } from "express";
 import { MenuModel } from "../models/menuModels";
 import { Prisma } from "../generated/prisma/client";
-import { ClientError, IngredientesRec, ValidarRec } from "../types/esquemas";
+import { ClientError, ValidarRec } from "../types/esquemas";
 import { tipoFamilias } from "../utilities/conversorUnid";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
 
@@ -73,8 +73,7 @@ export default class MenuController {
             if (typeof id !== 'string') return res.status(400).json({error : 'Datos Incorrectos'}); 
 
             const nuevosDatos = await this.menuModels.editarProductoExistente({id, input: inputSeguro});
-            res.status(200).json(nuevosDatos); 
-           
+            return res.status(200).json(nuevosDatos); 
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
@@ -82,7 +81,7 @@ export default class MenuController {
                 }
             }
             console.log(error);
-            res.status(500).json({error: 'Error en el servidor'})
+            return res.status(500).json({error: 'Error en el servidor'})
         }
     }
 
@@ -93,7 +92,7 @@ export default class MenuController {
             if (typeof id !== 'string') return res.status(400).json({error : 'Datos Incorrectos'});
 
             await this.menuModels.borrarProducto(id);
-            res.status(200).json({ mensaje: 'Producto eliminado' }); 
+            return res.status(200).json({ mensaje: 'Producto eliminado' }); 
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
@@ -101,7 +100,7 @@ export default class MenuController {
                 }
             }
             console.log(error);
-            res.status(500).json({error: 'Error en el servidor'})
+            return res.status(500).json({error: 'Error en el servidor'})
         }
     }
 
@@ -175,7 +174,7 @@ export default class MenuController {
             }
             const nuevosDatos = await this.menuModels.editarRec(datosRec)
 
-            res.status(200).json(nuevosDatos)
+            return res.status(200).json(nuevosDatos)
         } catch (error) {
             if (error instanceof PrismaClientKnownRequestError) {
                 if (error.code === 'P2025') {
@@ -183,7 +182,7 @@ export default class MenuController {
                 }
             }
             console.log(error);
-            res.status(500).json({error: 'Error en el servidor'})
+            return res.status(500).json({error: 'Error en el servidor'})
         }
     }
 
@@ -193,10 +192,10 @@ export default class MenuController {
             if (typeof id !== 'string') return res.status(400).json({ mensaje: 'No se encontro la receta' });
 
             await this.menuModels.borrarRec(id)
-            res.status(200).json({ mensaje: 'Receta eliminada' });
+            return res.status(200).json({ mensaje: 'Receta eliminada' });
         } catch (error) {
             console.log(error);
-            res.status(400).json({error: 'Error al eliminar la receta'})
+            return res.status(400).json({error: 'Error al eliminar la receta'})
         }
     }
 

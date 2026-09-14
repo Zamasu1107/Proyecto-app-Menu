@@ -7,6 +7,7 @@ export const validarFormIng = (schema: ZodType) => ( async(req:Request, res:Resp
         const respuesta = await schema.parseAsync(req.body)
         req.body = respuesta
         next()
+        return
     } catch (error) {
         if (error instanceof ZodError) {
         return res.status(400).json({ error: error.errors,});

@@ -26,8 +26,7 @@ export default class AuthController {
             const token = jwt.sign({id: createdUser.id, username: createdUser.username, rol: createdUser.rol}, admitedEnv.SECRET_KEY, { expiresIn: '10h'})
 
             res.cookie('access_token', token, { httpOnly: true, secure: true })
-
-            res.status(201).json({ message: "Usuario creado exitosamente" })
+            return res.status(201).json({ message: "Usuario creado exitosamente" })
         } catch (error) {
             if (error instanceof ZodError) {
                 return res.status(400).json({Error: error.issues});
@@ -61,7 +60,7 @@ export default class AuthController {
             const token = jwt.sign({id: valUsername.id, username, rol: valUsername.rol}, admitedEnv.SECRET_KEY, { expiresIn: '10h'})
 
             res.cookie('access_token', token, { httpOnly: true, secure: true })
-            res.status(200).json({ message: "Usuario logeado exitosamente" })  
+            return res.status(200).json({ message: "Usuario logeado exitosamente" })
         } catch (error) {
             if (error instanceof ZodError) {
                 return res.status(400).json({Error: error.issues});

@@ -2,7 +2,6 @@ import { Prisma } from "../generated/prisma/client";
 import prisma from "../db/prisma/prismaDB";
 import { conversionUnid } from "../utilities/conversorUnid";
 import { ActualizarDatos, ClientError } from "../types/esquemas";
-import { promise } from "zod";
 
 export class MenuModel {
     static async obtenerIng () {
