@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
 import "dotenv/config";
 import { admitedEnv } from "../../schemas/auth.schema";
 import { createMysqlPool, MysqlAdapterFactory } from "./mysqlAdapter";

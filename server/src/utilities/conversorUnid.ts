@@ -1,4 +1,4 @@
-import { FamiliaMedida } from "../generated/prisma/enums";
+import { FamiliaMedida } from "@prisma/client";
 
 const multiplicadorUnid: Record<string, Record<string, number>>= {
     VOLUMEN : {

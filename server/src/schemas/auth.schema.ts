@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Role } from "../generated/prisma/enums";
+import { Role } from "@prisma/client";
 import 'dotenv/config'
 
 export const authNewUser = z.object({

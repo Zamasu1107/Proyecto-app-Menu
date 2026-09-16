@@ -1,4 +1,4 @@
-import { Prisma } from "../generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import prisma from "../db/prisma/prismaDB";
 import { conversionUnid } from "../utilities/conversorUnid";
 import { ActualizarDatos, ClientError } from "../types/esquemas";
