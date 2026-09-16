@@ -4,7 +4,7 @@ import { MiPayload } from "../types/esquemas";
 import { admitedEnv } from "../schemas/auth.schema";
 
 export const validarToken = ((req:Request, res:Response, next:NextFunction) => {
-    const authToken = req.cookies.access_token
+    const authToken = req.headers.authorization
 
     if (!authToken) { return res.status(401).json({error: 'Acceso no autorizado'});}
 
@@ -15,7 +15,6 @@ export const validarToken = ((req:Request, res:Response, next:NextFunction) => {
         return  
     } catch (error) {
         return res.status(401).json({error : 'Acceso no autorizado'});
-        
     }
 })
 
