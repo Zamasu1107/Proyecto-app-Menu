@@ -1,6 +1,6 @@
 import { Response, Request } from "express";
 import { MenuModel } from "../models/menuModels";
-import { Prisma } from "../generated/prisma/client";
+import { Prisma } from "@prisma/client";
 import { ClientError, ValidarRec } from "../types/esquemas";
 import { tipoFamilias } from "../utilities/conversorUnid";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/client";
