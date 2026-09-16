@@ -1,4 +1,4 @@
-GET http://localhost:1001/api/ingredientes
+GET http://localhost:10000/api/ingredientes
 
 ###
 

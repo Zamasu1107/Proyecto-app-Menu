@@ -1,10 +1,13 @@
-function cambiarTab(tab:string) {
-            const loginField = document.getElementById('log_field')!;
-            const registerField = document.getElementById('register_field')!;
-            const tabLogin = document.getElementById('tab-login')!;
-            const tabRegister = document.getElementById('tab-register')!;
+import { divMostrarOcultar, cambiarDiv, registerForm, loginForm } from "../utils/domContent";
 
-            if (tab === 'login') {
+cambiarDiv.addEventListener('click', (e:Event) => {
+    const loginbtn = (e.target as HTMLButtonElement).id
+    const loginField = document.getElementById('log_field')!;
+    const registerField = document.getElementById('register_field')!;
+    const tabLogin = document.getElementById('tab-login')!;
+    const tabRegister = document.getElementById('tab-register')!;
+
+    if (loginbtn === 'tab-login') {
                 loginField.classList.remove('oculto');
                 registerField.classList.add('oculto');
                 tabLogin.classList.add('activo');
@@ -15,10 +18,15 @@ function cambiarTab(tab:string) {
                 tabRegister.classList.add('activo');
                 tabLogin.classList.remove('activo');
             }
-        }
 
-function togglePassword(inputId:string, btn:HTMLElement) {
-            const input = document.getElementById(inputId)! as HTMLInputElement;
+})
+
+divMostrarOcultar.forEach(div => {
+    div.addEventListener('click', (e:Event) => {
+        const input = div.querySelector('input');
+        const btn = div.querySelector('button');
+        if (e.target instanceof HTMLInputElement) return
+        if (input && btn) {
             if (input.type === 'password') {
                 input.type = 'text';
                 btn.style.color = '#e6c594';
@@ -27,15 +35,14 @@ function togglePassword(inputId:string, btn:HTMLElement) {
                 btn.style.color = 'rgba(255, 255, 255, 0.4)';
             }
         }
-
-const loginForm = document.getElementById('log_form') as HTMLFormElement;
-const registerForm = document.getElementById('register_form') as HTMLFormElement
+    })
+})
 
 registerForm.addEventListener('submit', async (ev:Event) => {
     ev.preventDefault()
     const userError = document.getElementById('user-error')!;
     userError.classList.add('oculto')
-    userError.textContent = '' 
+    userError.textContent = ''
 
     const regForm = new FormData(registerForm)
     const verificarForm = Object.fromEntries(regForm.entries()) as { new_username: string, new_password: string, confirm_password: string }
@@ -44,7 +51,7 @@ registerForm.addEventListener('submit', async (ev:Event) => {
         const passError = document.querySelectorAll('.password-error');
             passError.forEach((msg) => {
                     msg.classList.remove('oculto')
-                    msg.textContent = 'Las contraseñas no coinciden'  
+                    msg.textContent = 'Las contraseñas no coinciden'
             })
         return
     }
@@ -52,7 +59,9 @@ registerForm.addEventListener('submit', async (ev:Event) => {
         new_username: verificarForm.new_username,
         new_password: verificarForm.new_password
     }
-    
+
+
+
     try {
         const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/register`, {
             method: 'POST',
@@ -70,7 +79,7 @@ registerForm.addEventListener('submit', async (ev:Event) => {
                 const {error} = await respuesta.json()
                 const userError = document.getElementById('user-error')!;
                     userError.classList.remove('oculto')
-                    userError.textContent = error      
+                    userError.textContent = error
             } else {
                 alert('Error al registrar, intente de nuevo')
             }
@@ -86,7 +95,7 @@ loginForm.addEventListener('submit', async (ev:Event) => {
     textError.forEach((msg) => {
         msg.classList.add('oculto')
         msg.textContent = ''
-    })    
+    })
 
     const logForm = new FormData(loginForm)
     const valForm = Object.fromEntries(logForm.entries())
@@ -101,7 +110,7 @@ loginForm.addEventListener('submit', async (ev:Event) => {
             body: JSON.stringify(valForm)
         })
 
-        if (respuesta.ok) {
+            if (respuesta.ok) {
             window.location.href = `${import.meta.env.VITE_HTTP_URL}/indexInv`
             loginForm.reset();
         } else {
@@ -110,9 +119,9 @@ loginForm.addEventListener('submit', async (ev:Event) => {
                 textError.forEach((msg) => {
                     if (error) {
                         msg.classList.remove('oculto')
-                        msg.textContent = error    
+                        msg.textContent = error
                     }
-                }) 
+                })
             } else {
                 alert('Error al validar, intente de nuevo')
             }

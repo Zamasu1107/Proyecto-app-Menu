@@ -48,3 +48,9 @@ export const contenedor = document.getElementById('card-Recetas') as HTMLElement
 export const barraBusqueda = document.getElementById('barra-busqueda') as HTMLInputElement;
 export const barraNav = document.getElementById('card-Nav-Busqueda') as HTMLElement;
 export const modalRec = document.getElementById('receta-modal') as HTMLDivElement;
+
+//|---------- DOM del Area Login/Register ----------|
+export const loginForm = document.getElementById('log_form') as HTMLFormElement;
+export const registerForm = document.getElementById('register_form') as HTMLFormElement
+export const cambiarDiv = document.getElementById('tabs-auth-cambio') as HTMLDivElement;
+export const divMostrarOcultar = document.querySelectorAll('.input-password-wrapper')

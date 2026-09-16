@@ -1,6 +1,6 @@
 export async function obtenerRecetas() {
   try {
-    const respuesta = await fetch('http://localhost:1001/api/recetas')
+    const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/recetas`)
 
     if (respuesta.ok) {
       const datos = await respuesta.json();

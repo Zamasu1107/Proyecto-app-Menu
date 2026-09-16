@@ -46,7 +46,8 @@ const secureEnv = z.object({
   FRONTEND_URL : z
   .url(),
   DATABASE_URL : z
-  .url() 
+  .string()
+  .min(1)
 })
 
 export const admitedEnv = secureEnv.parse(process.env);

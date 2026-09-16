@@ -1,6 +1,6 @@
 export async function obtenerAuth () {
     try {
-        const respuesta = await fetch('http://localhost:1001/api/auth/status', {
+        const respuesta = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/status`, {
             method: 'GET',
             credentials: 'include'
         });
