@@ -23,7 +23,7 @@ export default class AuthController {
 
             const createdUser = await this.authModels.registrarUser(new_username, hashedPassword)
 
-            const token = jwt.sign({id: createdUser.id, username: createdUser.username, rol: createdUser.rol}, admitedEnv.SECRET_KEY, { expiresIn: '10h'})
+            const token = jwt.sign({id: createdUser.id, username: createdUser.username, rol: createdUser.rol}, admitedEnv.SECRET_KEY, { expiresIn: '1h'})
 
             return res.json({ 
                         msg: "Bienvenido nuevo usuario", 
